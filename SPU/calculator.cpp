@@ -9,47 +9,46 @@ static int console_sqrt(stack_t *stk, error_t *err);
 static int console_out(stack_t *stk, error_t *err);
 
 void console(){
-    char command[max_command_len];
-    char format[max_command_len];
+    int command = 0;
 
     error_t err = no_error; 
+    
     stack_t stk = {};
     init_stack(&stk, &err);
     if (err != no_error) return;
+    
+    bool work_status = true;
+    while (work_status){
+        err = no_error;
+        scanf("%d", &command);
 
-    while (true){
-        sprintf(format, "%%%ds", max_command_len - 1);
-        scanf(format, command);
-
-        if (strcmp(command, "PUSH") == 0){
-            if (console_push(&stk, &err)) printf("ERROR!\n");
-        }
-        if (strcmp(command, "ADD") == 0){
-            if (console_add(&stk, &err)) printf("ERROR!\n");
-        }
-        if (strcmp(command, "MULL") == 0){
-            if (console_mull(&stk, &err)) printf("ERROR!\n");
-        }
-        if (strcmp(command, "SUB") == 0){
-            if (console_sub(&stk, &err)) printf("ERROR!\n");
-        }
-        if (strcmp(command, "DIV") == 0){
-            if (console_div(&stk, &err)) printf("ERROR!\n");
-        }
-        if (strcmp(command, "SQRT") == 0){
-            if (console_sqrt(&stk, &err)) printf("ERROR!\n");
-        }
-
-        if (strcmp(command, "DUMP") == 0){
-            USER_DUMP(&stk, no_error);
-        }
-        if (strcmp(command, "OUT") == 0){
-            if (console_out(&stk, &err)) printf("ERROR!\n");
-            break;
+        switch (command){ // TODO make enum commands
+       // ⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⢉⢉⠉⠉⠻⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⣿⣿⣿⠟⠠⡰⣕⣗⣷⣧⣀⣅⠘⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⣿⣿⠃⣠⣳⣟⣿⣿⣷⣿⡿⣜⠄⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⡿⠁⠄⣳⢷⣿⣿⣿⣿⡿⣝⠖⠄⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⠃⠄⢢⡹⣿⢷⣯⢿⢷⡫⣗⠍⢰⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⡏⢀⢄⠤⣁⠋⠿⣗⣟⡯⡏⢎⠁⢸⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⠄⢔⢕⣯⣿⣿⡲⡤⡄⡤⠄⡀⢠⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⠇⠠⡳⣯⣿⣿⣾⢵⣫⢎⢎⠆⢀⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⠄⢨⣫⣿⣿⡿⣿⣻⢎⡗⡕⡅⢸⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⠄⢜⢾⣾⣿⣿⣟⣗⢯⡪⡳⡀⢸⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⠄⢸⢽⣿⣷⣿⣻⡮⡧⡳⡱⡁⢸⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⡄⢨⣻⣽⣿⣟⣿⣞⣗⡽⡸⡐⢸⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⡇⢀⢗⣿⣿⣿⣿⡿⣞⡵⡣⣊⢸⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⡀⡣⣗⣿⣿⣿⣿⣯⡯⡺⣼⠎⣿⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣧⠐⡵⣻⣟⣯⣿⣷⣟⣝⢞⡿⢹⣿⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⡆⢘⡺⣽⢿⣻⣿⣗⡷⣹⢩⢃⢿⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⣷⠄⠪⣯⣟⣿⢯⣿⣻⣜⢎⢆⠜⣿⣿⣿⣿⣿
+       // ⣿⣿⣿⣿⣿⡆⠄⢣⣻⣽⣿⣿⣟⣾⡮⡺⡸⠸⣿⣿⣿⣿
+       // ⣿⣿⡿⠛⠉⠁⠄⢕⡳⣽⡾⣿⢽⣯⡿⣮⢚⣅⠹⣿⣿⣿
+       // ⡿⠋⠄⠄⠄⠄⢀⠒⠝⣞⢿⡿⣿⣽⢿⡽⣧⣳⡅⠌⠻⣿
+       // ⠁⠄⠄⠄⠄⠄⠐⡐⠱⡱⣻⡻⣝⣮⣟⣿⣻⣟⣻⡺⣊
         }
     }
 
     destroy_stack(&stk, &err);
+
     if (err){
         printf("ERROR!");
     }
@@ -144,15 +143,14 @@ static int console_sqrt(stack_t *stk, error_t *err){
 }
 
 static int console_out(stack_t *stk, error_t *err){
-    printf("%d\n", stk->size);
     while (stk->size != 0){
         stackElemType num = pop_stack(stk, err);
         if (*err){
-            printf("sdsaxcdASdSD");
+            printf("asdfd");
             return 1;
         }
         printf("%d ", num);
     }
-    printf("\n");
+    destroy_stack(stk);
     return 0;
 }
