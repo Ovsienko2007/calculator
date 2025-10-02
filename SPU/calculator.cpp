@@ -1,8 +1,10 @@
 #include "calculator.h"
 
+// TODO WHY CONSOLE
+
 static int console_push(stack_t *stk, error_t *err);
 static int console_add(stack_t *stk, error_t *err);
-static int console_mull(stack_t *stk, error_t *err);
+static int console_mul(stack_t *stk, error_t *err);
 static int console_sub(stack_t *stk, error_t *err);
 static int console_div(stack_t *stk, error_t *err);
 static int console_sqrt(stack_t *stk, error_t *err);
@@ -11,46 +13,50 @@ static int console_out(stack_t *stk, error_t *err);
 void console(){
     int command = 0;
 
-    error_t err = no_error; 
+    error_t command_err = no_error; 
     
     stack_t stk = {};
-    init_stack(&stk, &err);
-    if (err != no_error) return;
+    init_stack(&stk, &command_err);
+    if (command_err != no_error) return;
     
     bool work_status = true;
     while (work_status){
-        err = no_error;
+        command_err = no_error;
         scanf("%d", &command);
 
-        switch (command){ // TODO make enum commands
-       // ⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⢉⢉⠉⠉⠻⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⣿⣿⣿⠟⠠⡰⣕⣗⣷⣧⣀⣅⠘⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⣿⣿⠃⣠⣳⣟⣿⣿⣷⣿⡿⣜⠄⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⡿⠁⠄⣳⢷⣿⣿⣿⣿⡿⣝⠖⠄⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⠃⠄⢢⡹⣿⢷⣯⢿⢷⡫⣗⠍⢰⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⡏⢀⢄⠤⣁⠋⠿⣗⣟⡯⡏⢎⠁⢸⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⠄⢔⢕⣯⣿⣿⡲⡤⡄⡤⠄⡀⢠⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⠇⠠⡳⣯⣿⣿⣾⢵⣫⢎⢎⠆⢀⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⠄⢨⣫⣿⣿⡿⣿⣻⢎⡗⡕⡅⢸⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⠄⢜⢾⣾⣿⣿⣟⣗⢯⡪⡳⡀⢸⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⠄⢸⢽⣿⣷⣿⣻⡮⡧⡳⡱⡁⢸⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⡄⢨⣻⣽⣿⣟⣿⣞⣗⡽⡸⡐⢸⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⡇⢀⢗⣿⣿⣿⣿⡿⣞⡵⡣⣊⢸⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⡀⡣⣗⣿⣿⣿⣿⣯⡯⡺⣼⠎⣿⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣧⠐⡵⣻⣟⣯⣿⣷⣟⣝⢞⡿⢹⣿⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⡆⢘⡺⣽⢿⣻⣿⣗⡷⣹⢩⢃⢿⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⣷⠄⠪⣯⣟⣿⢯⣿⣻⣜⢎⢆⠜⣿⣿⣿⣿⣿
-       // ⣿⣿⣿⣿⣿⡆⠄⢣⣻⣽⣿⣿⣟⣾⡮⡺⡸⠸⣿⣿⣿⣿
-       // ⣿⣿⡿⠛⠉⠁⠄⢕⡳⣽⡾⣿⢽⣯⡿⣮⢚⣅⠹⣿⣿⣿
-       // ⡿⠋⠄⠄⠄⠄⢀⠒⠝⣞⢿⡿⣿⣽⢿⡽⣧⣳⡅⠌⠻⣿
-       // ⠁⠄⠄⠄⠄⠄⠐⡐⠱⡱⣻⡻⣝⣮⣟⣿⣻⣟⣻⡺⣊
+        switch (command){
+        case push_func:
+            console_push(&stk, &command_err);
+            break;
+        case add_func:
+            console_add(&stk, &command_err);
+            break;
+        case mul_func:
+            console_mul(&stk, &command_err);
+            break;
+        case sub_func:
+            console_sub(&stk, &command_err);
+            break;
+        case div_func:
+            console_div(&stk, &command_err);
+            break;
+        case sqrt_func:
+            console_sqrt(&stk, &command_err);
+            break;
+        case dump_func:
+            USER_DUMP(&stk);
+            break;
+        case out_func:
+            console_out(&stk, &command_err);
+            destroy_stack(&stk, &command_err);
+            work_status = false;
+            break;
+        default:
+            break;
         }
-    }
-
-    destroy_stack(&stk, &err);
-
-    if (err){
-        printf("ERROR!");
+        if (command_err){
+            printf("ERROR!\n");
+        }
     }
 }
 
@@ -96,20 +102,18 @@ static int console_sub(stack_t *stk, error_t *err){
     return 0;
 }
 
-static int console_mull(stack_t *stk, error_t *err){
+static int console_mul(stack_t *stk, error_t *err){
     stackElemType num_1 = pop_stack(stk, err);
     if (*err){
         push_stack(stk, num_1);
         return 1;
     }
-    printf("%d\n", num_1);
 
     stackElemType num_2 = pop_stack(stk, err);
     if (*err){
         push_stack(stk, num_1);
         return 1;
     }
-    printf("%d %d\n", num_1, num_2);
     push_stack(stk, num_1 * num_2);
     return 0;
 }
