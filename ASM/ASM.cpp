@@ -123,7 +123,7 @@ int add_funcs(code *buffer, data_text *program, const char *file_name){
             int reg = 0;
             if (add_command(buffer, pushr_func)) error = true;
             
-            program->text.lines[line] += strlen(command);
+            program->text.lines[line] += strlen(command) + 1;
 
             reg = get_reg_name(program, line);
 
@@ -153,6 +153,7 @@ int add_funcs(code *buffer, data_text *program, const char *file_name){
             is_command = false;
         }
         
+        
         if (!step_complited && is_command){
             program->text.lines[line] += strlen(command);
         }
@@ -165,18 +166,17 @@ int add_funcs(code *buffer, data_text *program, const char *file_name){
             break;
         }
     }
-    
 
     if (!program_ended){
-        printf("The assembly is not finished");
         print_error(file_name, line);
+        printf("The assembly was not finished\n");
         return 1;
     }
     return 0;
 }
 
 void print_error(const char *file, int line){
-    printf("error %s:%d\n", file, line);
+    printf("error %s:%d\n", file, line + 1);
 }
 
 void del_comment(char *line){
@@ -250,7 +250,7 @@ int get_reg_name(data_text *program, int line){
 int find_int_len(int num) {
     int ans = 0;
 
-    if (num < 0){
+    if (num <= 0){
         ans++;
     }
     
