@@ -16,6 +16,16 @@ enum func_name{
     popr_func  = 42
 };
 
+enum error_t{
+    no_error             = 0,
+    no_command           = 1,
+    is_not_num           = 2,
+    no_such_reg          = 3,
+    program_not_finished = 4,
+    extra_parameter      = 5,
+    inside_error         = 6,
+};
+
 struct code{
     int size;
     int capacity;
@@ -27,8 +37,8 @@ const int maxRegLen     = 8;
 
 int find_int_len(int num);
 int get_reg_name(data_text *program, int line);
-int add_funcs(code *buffer, data_text *program, const char *file_name);
-void print_error(const char *file, int line);
+bool add_funcs(code *buffer, data_text *program, const char *file_name);
+void print_error(const char *file, int line, error_t error);
 void del_comment(char *line);
 
 int init_code(code *data);
@@ -44,7 +54,7 @@ int main(){
     code buffer = {};
     init_code(&buffer);
     
-    if (add_funcs(&buffer, &program, file_name)) return 1;
+    if (!add_funcs(&buffer, &program, file_name)) return 1;
 
     FILE *stream = fopen("byte_code.txt", "w");
 
@@ -59,9 +69,10 @@ int main(){
 }
 
 
-int add_funcs(code *buffer, data_text *program, const char *file_name){
+bool add_funcs(code *buffer, data_text *program, const char *file_name){
     char command[20] = {};
     bool program_ended = false;
+    bool no_errors = true;
     
 
     int line = 0;
@@ -70,113 +81,145 @@ int add_funcs(code *buffer, data_text *program, const char *file_name){
         if (strlen(program->text.lines[line]) == strspn(program->text.lines[line], " \t\n\r\f\v")){
             continue;
         }
-        bool error = false;
+        error_t error = no_error;
         bool step_complited = false;
         bool is_command = true;
 
         sscanf(program->text.lines[line], "%s", command);
 
         if (strcmp(command, "ADD")  == 0){
-            if (add_command(buffer, add_func)) error = true;
+            if (add_command(buffer, add_func)) error  = inside_error;
         }
         else if (strcmp(command, "MUL")  == 0){
-            if (add_command(buffer, mul_func)) error = true;
+            if (add_command(buffer, mul_func)) error  = inside_error;
         }
         else if (strcmp(command, "SUB")  == 0){
-            if (add_command(buffer, sub_func)) error = true;
+            if (add_command(buffer, sub_func)) error  = inside_error;
         }
         else if (strcmp(command, "DIV")  == 0){
-            if (add_command(buffer, div_func)) error = true;
+            if (add_command(buffer, div_func)) error  = inside_error;
         }
         else if (strcmp(command, "SQRT") == 0){
-            if (add_command(buffer, sqrt_func)) error = true;
+            if (add_command(buffer, sqrt_func)) error = inside_error;
         }
         else if (strcmp(command, "DUMP") == 0){
-            if (add_command(buffer, dump_func)) error = true;
+            if (add_command(buffer, dump_func)) error = inside_error;
         }
         else if (strcmp(command, "OUT")  == 0){
-            if (add_command(buffer, out_func)) error = true;
+            if (add_command(buffer, out_func)) error  = inside_error;
         }
         else if (strcmp(command, "IN") == 0){
-            if (add_command(buffer, in_func)) error = true;
+            if (add_command(buffer, in_func)) error   = inside_error;
         }
         else if (strcmp(command, "HALT")  == 0){
-            if (add_command(buffer, halt_func)) error = true;
-            program_ended = true;
+            if (add_command(buffer, halt_func)) error = inside_error;
+            else{
+                program_ended = true;
+            }
             break;
         }
         else if (strcmp(command, "PUSH") == 0){
-            if (add_command(buffer, push_func)) error = true;
+            if (add_command(buffer, push_func)) error = inside_error;
             int new_elem = 0;
             program->text.lines[line] += strlen(command) + 1;
 
             if (sscanf(program->text.lines[line], "%d", &new_elem) == 0){
-                error = true;
+                error = is_not_num;
             }
-
-            if (add_command(buffer, new_elem)) error = true;
-
-            program->text.lines[line] += find_int_len(new_elem);
+            else{
+                if (add_command(buffer, new_elem)) error = inside_error;
+                program->text.lines[line] += find_int_len(new_elem);
+            }
             step_complited = true;
         }
         else if (strcmp(command, "PUSHR") == 0){
             int reg = 0;
-            if (add_command(buffer, pushr_func)) error = true;
+            if (add_command(buffer, pushr_func)) error = inside_error;
             
             program->text.lines[line] += strlen(command) + 1;
 
             reg = get_reg_name(program, line);
 
-            if (reg < 0){
-                error = true;
+            if (reg < 0 || reg > 8){
+                error = no_such_reg;
             }
-
-            if (add_command(buffer, reg)) error = true;
+            else if (add_command(buffer, reg)) error = inside_error;
             step_complited = true;
         }
         else if (strcmp(command, "POPR") == 0){
             int reg = 0;
-            if (add_command(buffer, popr_func)) error = true;
+            if (add_command(buffer, popr_func)) error = inside_error;
             
             program->text.lines[line] += strlen(command) + 1;
 
             reg = get_reg_name(program, line);
 
-            if (reg < 0){
-                error = true;
+            if (reg < 0 || reg > 8){
+                error = no_such_reg;
             }
+            else if (add_command(buffer, reg)) error = inside_error;
 
-            if (add_command(buffer, reg)) error = true;
             step_complited = true;
         }
         else{
             is_command = false;
         }
-        
-        
-        if (!step_complited && is_command){
+
+        if (!step_complited && is_command && !error){
             program->text.lines[line] += strlen(command);
         }
 
-        if (strlen(program->text.lines[line]) != strspn(program->text.lines[line], " \t\n\r\f\v")){
-            error = true;
+        if (!is_command){
+            error = no_command;
+        } 
+        else if (strlen(program->text.lines[line]) != 
+                   strspn(program->text.lines[line], " \t\n\r\f\v")){
+            error = extra_parameter;
         }
+        
+        
+        
+
 
         if (error){
-            break;
+            no_errors = false;
+            print_error(file_name, line, error);
         }
     }
 
     if (!program_ended){
-        print_error(file_name, line);
+        no_errors = false;
+        print_error(file_name, line, program_not_finished);
         printf("The assembly was not finished\n");
-        return 1;
     }
-    return 0;
+    return no_errors;
 }
 
-void print_error(const char *file, int line){
-    printf("error %s:%d\n", file, line + 1);
+void print_error(const char *file, int line, error_t error){
+    printf("Error %s:%d\n", file, line + 1);
+    switch (error){
+        case no_error: break;
+        case no_command:
+            printf("There is no such command!\n");
+            break;
+        case is_not_num:
+            printf("Expected number!\n");
+            break;
+        case no_such_reg:
+            printf("There is not such registor!\n");
+            break;
+        case program_not_finished:
+            printf("Programm didn\'t finished!\n");
+            break;
+        case extra_parameter:
+            printf("Extra parametr!\n");
+            break;
+        case inside_error:
+            printf("Some inside error!\n");
+            break;
+        default:
+            break;
+    }
 }
 
 void del_comment(char *line){
@@ -187,7 +230,6 @@ void del_comment(char *line){
 }
 
 int init_code(code *data){
-    
     if (data == NULL) return 1;
 
     *data = {
