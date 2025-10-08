@@ -19,11 +19,17 @@ enum func_name{
 enum error_t{
     no_error             = 0,
     no_command           = 1,
-    is_not_num           = 2,
+    incorrect_par        = 2,
     no_such_reg          = 3,
-    program_not_finished = 4,
-    extra_parameter      = 5,
-    inside_error         = 6,
+    uninitialized_reg    = 4,
+    program_not_finished = 5,
+    extra_parameter      = 6,
+    inside_error         = 7,
+};
+
+enum get_red_mod{
+    push_reg,
+    pop_reg,
 };
 
 struct code{
@@ -36,13 +42,27 @@ const int startCodeSize = 16;
 const int maxRegLen     = 8;
 
 int find_int_len(int num);
-int get_reg_name(data_text *program, int line);
 bool add_funcs(code *buffer, data_text *program, const char *file_name);
 void print_error(const char *file, int line, error_t error);
 void del_comment(char *line);
 
+int get_reg_name(data_text *program, int line,  
+                 unsigned char * inicialised_regs, get_red_mod mod, error_t *error);
+
 int init_code(code *data);
 int add_command(code *data, int new_elem);
+int add_in_rec(unsigned char *inicialised_regs, int x);
+int is_in_rec(unsigned char inicialised_regs, int x);
+
+int add_in_rec(unsigned char *inicialised_regs, int x){
+	if (x >= 8) return 1;
+	*inicialised_regs = (*inicialised_regs) | (1 << x);
+	return 0;
+}
+
+int is_in_rec(unsigned char inicialised_regs, int x){
+	return (inicialised_regs & (1 << x)) != 0;
+}
 
 int main(){
     const char *file_name = "source.asm";
@@ -73,6 +93,7 @@ bool add_funcs(code *buffer, data_text *program, const char *file_name){
     char command[20] = {};
     bool program_ended = false;
     bool no_errors = true;
+    unsigned char inicialised_regs = 0;
     
 
     int line = 0;
@@ -124,7 +145,7 @@ bool add_funcs(code *buffer, data_text *program, const char *file_name){
             program->text.lines[line] += strlen(command) + 1;
 
             if (sscanf(program->text.lines[line], "%d", &new_elem) == 0){
-                error = is_not_num;
+                error = incorrect_par;
             }
             else{
                 if (add_command(buffer, new_elem)) error = inside_error;
@@ -138,12 +159,10 @@ bool add_funcs(code *buffer, data_text *program, const char *file_name){
             
             program->text.lines[line] += strlen(command) + 1;
 
-            reg = get_reg_name(program, line);
+            reg = get_reg_name(program, line, &inicialised_regs, push_reg, &error);
+            
+            if (!error && add_command(buffer, reg)) error = inside_error;
 
-            if (reg < 0 || reg > 8){
-                error = no_such_reg;
-            }
-            else if (add_command(buffer, reg)) error = inside_error;
             step_complited = true;
         }
         else if (strcmp(command, "POPR") == 0){
@@ -152,12 +171,9 @@ bool add_funcs(code *buffer, data_text *program, const char *file_name){
             
             program->text.lines[line] += strlen(command) + 1;
 
-            reg = get_reg_name(program, line);
-
-            if (reg < 0 || reg > 8){
-                error = no_such_reg;
-            }
-            else if (add_command(buffer, reg)) error = inside_error;
+            reg = get_reg_name(program, line, &inicialised_regs, pop_reg, &error);
+            
+            if (!error && add_command(buffer, reg)) error = inside_error;
 
             step_complited = true;
         }
@@ -176,10 +192,6 @@ bool add_funcs(code *buffer, data_text *program, const char *file_name){
                    strspn(program->text.lines[line], " \t\n\r\f\v")){
             error = extra_parameter;
         }
-        
-        
-        
-
 
         if (error){
             no_errors = false;
@@ -202,14 +214,17 @@ void print_error(const char *file, int line, error_t error){
         case no_command:
             printf("There is no such command!\n");
             break;
-        case is_not_num:
-            printf("Expected number!\n");
+        case incorrect_par:
+            printf("Incorrect parameter!\n");
             break;
         case no_such_reg:
             printf("There is not such registor!\n");
             break;
+        case uninitialized_reg:
+            printf("This register has not been initialized!\n");
+            break;
         case program_not_finished:
-            printf("Programm didn\'t finished!\n");
+            printf("Programm did not finished!\n");
             break;
         case extra_parameter:
             printf("Extra parametr!\n");
@@ -260,33 +275,53 @@ int add_command(code *data, int new_elem){
     return 0;
 }
 
-int get_reg_name(data_text *program, int line){
+int get_reg_name(data_text *program, int line,  
+                 unsigned char * inicialised_regs, get_red_mod mod, error_t *error){
+
+    int new_reg = -1;
+
     char reg[maxRegLen] = {};
     if (sscanf(program->text.lines[line], "%7s", reg) == 0){
+        *error = incorrect_par;
         return -1;
     }
     program->text.lines[line] += strlen(reg);
 
     if (strcmp(reg, "RAX") == 0){
-        return 0;
+        new_reg = 0;
     }
-    if (strcmp(reg, "RBX") == 0){
-        return 1;
+    else if (strcmp(reg, "RBX") == 0){
+        new_reg = 1;
     }
-    if (strcmp(reg, "RCX") == 0){
-        return 2;
+    else if (strcmp(reg, "RCX") == 0){
+        new_reg = 2;
     }
-    if (strcmp(reg, "RDX") == 0){
-        return 3;
+    else if (strcmp(reg, "RDX") == 0){
+        new_reg = 3;
     }
-    if (strcmp(reg, "REX") == 0){
-        return 4;
+    else if (strcmp(reg, "REX") == 0){
+        new_reg = 4;
     }
-    if (strcmp(reg, "HUI") == 0){
-        return 5;
+    else if (strcmp(reg, "RFX") == 0){
+        new_reg = 5;
+    }
+    else if (strcmp(reg, "RGX") == 0){
+        new_reg = 6;
+    }
+    else if (strcmp(reg, "HUI") == 0){
+        new_reg = 7;
     }
 
-    return -1;
+    if (0 > new_reg || new_reg > 8){
+        *error = no_such_reg;
+    }
+    else if (mod == push_reg){
+        add_in_rec(inicialised_regs, new_reg);
+    } else if (is_in_rec(*inicialised_regs, new_reg)){
+        *error = uninitialized_reg;
+    }
+
+    return new_reg;
 }
 
 int find_int_len(int num) {
