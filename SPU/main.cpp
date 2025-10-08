@@ -1,4 +1,4 @@
-#include "calculator.h"
+#include "SPU.h"
 
 processor init_processor(bool *error);
 

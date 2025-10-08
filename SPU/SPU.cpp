@@ -1,4 +1,4 @@
-#include "calculator.h"
+#include "SPU.h"
 
 static int run_pushr(processor *proc, error_t *err);
 static int run_popr(processor *proc, error_t *err);
