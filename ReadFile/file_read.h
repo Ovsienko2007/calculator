@@ -58,7 +58,7 @@ int find_len_text_lines(data_text data);
  */
 int split_text(data_text *data);
 
-int open_file(data_text *data, const char *file_name);
+bool open_file(data_text *data, const char *file_name);
 
 data_text init_data_text();
 #endif

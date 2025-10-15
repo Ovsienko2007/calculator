@@ -6,23 +6,7 @@
 #include "stack.h"
 
 const int startCodeSize = 16;
-struct code_t{
-    int size;
-    int capacity;
-    int *data;
-};
-
-struct registers{
-    int regs_num;
-    int regs[8];
-};
-
-struct processor{
-    stack_t stack;
-    code_t  code;
-    int extantion_point;
-    registers regs;
-};
+const int maxRegLen     = 8;
 
 enum func_name{
     halt_func  = 0,
@@ -36,13 +20,67 @@ enum func_name{
     out_func   = 8,
     in_func    = 9,
     pushr_func = 33,
-    popr_func  = 42
+    popr_func  = 42,
+    jmp_func   = 50,
+    jb_func    = 51,
+    jbe_func   = 52,
+    ja_func    = 53,
+    jae_func   = 54,
+    je_func    = 55,
+    jne_func   = 56,
 };
+
+struct code_t{
+    int size;
+    int capacity;
+    int *data;
+};
+
+struct registers{
+    int regs_num;
+    int regs[maxRegLen];
+};
+
+struct processor{
+    stack_t stack;
+    code_t  code;
+    int extantion_point;
+    registers regs;
+};
+
+
 
 int init_code(code_t *data);
 int init_regs(registers *reg);
+
+int destroy_code(code_t *data);
+int destroy_regs(registers *reg);
+
 int run_code(processor *proc);
 int read_file(processor *proc);
 int add_command(code_t *data, int new_elem, int command_pos);
+
+typedef bool (*compare_func)(int, int);
+
+struct jump_instruct {
+    func_name instr;
+    compare_func func;
+};
+
+inline bool check_jb(int a, int b) { return a < b; }
+inline bool check_jbe(int a, int b) { return a <= b; }
+inline bool check_ja(int a, int b) { return a > b; }
+inline bool check_jae(int a, int b) { return a >= b; }
+inline bool check_je(int a, int b) { return a == b; }
+inline bool check_jne(int a, int b) { return a != b; }
+
+inline jump_instruct jump_func[] = {    
+    {jb_func, check_jb},
+    {jbe_func, check_jbe},
+    {ja_func, check_ja},
+    {jae_func, check_jae},
+    {je_func, check_je},
+    {jne_func, check_jne},
+};
 
 #endif

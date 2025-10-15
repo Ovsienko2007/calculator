@@ -68,18 +68,18 @@ off_t find_file_size(const char * file_name){
     return file_stat.st_size;
 }
 
-int open_file(data_text *data, const char *file_name){
+bool open_file(data_text *data, const char *file_name){
     read_file(file_name, data);
-    if (data->buffer.text == NULL) return -1;
+    if (data->buffer.text == NULL) return false;
 
     data->text.lines_count = find_len_text_lines(*data);
 
-    if (data->text.lines_count == 0) return -1;
+    if (data->text.lines_count == 0) return false;
 
     split_text(data);
-    if (data->text.lines == NULL) return -1;
+    if (data->text.lines == NULL) return false;
 
-    return 0;
+    return true;
 }
 
 data_text init_data_text(){

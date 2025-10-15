@@ -10,7 +10,6 @@ CFLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef \
    -Wwrite-strings -Werror=vla -D_DEBUG -D_EJUDGE_CLIENT_SIDE
 EXECUTABLE_NAME_SPU     = SPU.exe
 EXECUTABLE_NAME_ASM     = ASM.exe
-EXECUTABLE_NAME_DISASM  = DISASM.exe
 
 BUILDDIR      = Build
 
@@ -25,18 +24,13 @@ OBJECTS_SPU   = $(patsubst %.cpp, %.o, $(SOURCES_SPU))
 CXXFLAGSH_SPU = -I$(SPUDIR)/$(STACKDIR) -DSHOW_DUMP
 
 ASMDIR        = ASM
-SOURCES_ASM   = $(ASMDIR)/ASM.cpp
+SOURCES_ASM   = $(wildcard $(ASMDIR)/*.cpp)
 OBJECTS_ASM   = $(patsubst %.cpp, %.o, $(SOURCES_ASM))
 CXXFLAGSH_ASM = -I$(READFILEDIR)/
 
-DISASMDIR        = ASM
-SOURCES_DISASM   = $(DISASMDIR)/DISASM.cpp
-OBJECTS_DISASM   = $(patsubst %.cpp, %.o, $(SOURCES_DISASM))
-CXXFLAGSH_DISASM = -I$(READFILEDIR)/
-
 .PHONY = all clean start start_out_to_file
 
-all: make_folder $(OBJECTS_READ) $(EXECUTABLE_NAME_SPU) $(EXECUTABLE_NAME_ASM)  $(EXECUTABLE_NAME_DISASM)
+all: make_folder $(OBJECTS_READ) $(EXECUTABLE_NAME_ASM) $(EXECUTABLE_NAME_SPU)
 
 $(OBJECTS_READ): %.o: %.cpp
 	$(CC) $(CFLAGS) -c $^ -o ./$(BUILDDIR)/$@
@@ -55,13 +49,6 @@ $(EXECUTABLE_NAME_ASM): $(OBJECTS_ASM)
 $(OBJECTS_ASM): %.o: %.cpp
 	$(CC) $(CFLAGS) $(CXXFLAGSH_ASM) -c $^ -o ./$(BUILDDIR)/$@
 
-#____________________________DISASM________________________________
-$(EXECUTABLE_NAME_DISASM): $(OBJECTS_DISASM)
-	$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_DISASM)) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_READ))  -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_DISASM)
-
-$(OBJECTS_DISASM): %.o: %.cpp
-	$(CC) $(CFLAGS) $(CXXFLAGSH_DISASM) -c $^ -o ./$(BUILDDIR)/$@
-
 make_folder:
 	mkdir -p $(BUILDDIR)/$(SPUDIR)/$(STACKDIR)/
 	mkdir -p $(BUILDDIR)/$(ASMDIR)/
@@ -72,9 +59,6 @@ start_spu:
 
 start_asm:
 	./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
-
-start_disasm:
-	./$(BUILDDIR)/$(EXECUTABLE_NAME_DISASM)
 
 clean:
 	rm -rf ./$(BUILDDIR)/

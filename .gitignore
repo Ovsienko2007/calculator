@@ -2,5 +2,4 @@ Build/
 .vscode/
 prog.txt
 dump.txt
-byte_code.txt
-new_source.asm
+byte_code

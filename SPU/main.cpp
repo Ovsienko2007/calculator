@@ -1,6 +1,7 @@
 #include "SPU.h"
 
 processor init_processor(bool *error);
+int destroy_processor(processor *proc);
 
 int main(){
     bool init_error = false;
@@ -11,7 +12,9 @@ int main(){
     read_file(&proc);
     
     
-    return run_code(&proc);
+    run_code(&proc);
+
+    destroy_processor(&proc);
 }
 
 processor init_processor(bool *error){
@@ -31,4 +34,13 @@ processor init_processor(bool *error){
         if (error) *error = true;
     }
     return proc;
+}
+
+int destroy_processor(processor *proc){
+    destroy_stack(&(proc->stack));
+    destroy_regs(&(proc->regs));
+    destroy_code(&(proc->code));
+
+    proc->extantion_point = 0;
+    return 0;
 }

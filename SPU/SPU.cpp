@@ -10,18 +10,19 @@ static int run_sub(processor *proc, error_t *err);
 static int run_div(processor *proc, error_t *err);
 static int run_sqrt(processor *proc, error_t *err);
 static int run_out(processor *proc, error_t *err);
+static int run_jump(processor *proc, error_t *err, int func);
 
 int run_code(processor *proc){
     error_t command_err = no_error;
     int command = 0;
     
     bool work_status = true;
-    for (; proc->extantion_point < proc->code.size && work_status; proc->extantion_point++){
-        
+    while (proc->extantion_point < proc->code.size && work_status){
         command_err = no_error;
+        bool need_step = true;
         command = proc->code.data[proc->extantion_point];
 
-        switch (command){
+        switch (command){ //TODO rebuild
         case push_func:
             run_push(proc, &command_err);
             break;
@@ -58,6 +59,13 @@ int run_code(processor *proc){
         case popr_func:
             run_popr(proc, &command_err);
             break;
+        case jmp_func: 
+        case jb_func: case jbe_func:
+        case ja_func: case jae_func:
+        case je_func: case jne_func:
+            run_jump(proc, &command_err, command);
+            need_step = false;
+            break;
         default:
             break;
         }
@@ -66,9 +74,14 @@ int run_code(processor *proc){
             printf("ERROR!\n");
             return 1;
         }
+
+        if (need_step){
+            proc->extantion_point++;
+        }
     }
     return work_status;
 }
+
 
 static int run_push(processor *proc, error_t *err){
     proc->extantion_point++;
@@ -115,16 +128,10 @@ static int run_in(processor *proc, error_t *err){
 
 static int run_add(processor *proc, error_t *err){
     stackElemType num_1 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     stackElemType num_2 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     push_stack(&proc->stack, num_1 + num_2);
     return 0;
@@ -133,16 +140,10 @@ static int run_add(processor *proc, error_t *err){
 static int run_sub(processor *proc, error_t *err){
 
     stackElemType num_1 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     stackElemType num_2 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     push_stack(&proc->stack, num_2 - num_1);
     return 0;
@@ -150,32 +151,21 @@ static int run_sub(processor *proc, error_t *err){
 
 static int run_mul(processor *proc, error_t *err){
     stackElemType num_1 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     stackElemType num_2 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
+
     push_stack(&proc->stack, num_1 * num_2);
     return 0;
 }
 
 static int run_div(processor *proc, error_t *err){
     stackElemType num_1 = pop_stack(&proc->stack, err);
-    if (*err){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err) return 1;
 
     stackElemType num_2 = pop_stack(&proc->stack, err);
-    if (*err || num_1 == 0){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err || num_1 == 0) return 1;
 
     push_stack(&proc->stack, num_2 / num_1);
     return 0;
@@ -183,10 +173,7 @@ static int run_div(processor *proc, error_t *err){
 
 static int run_sqrt(processor *proc, error_t *err){
     stackElemType num_1 = pop_stack(&proc->stack, err);
-    if (*err || num_1 < 0){
-        push_stack(&proc->stack, num_1);
-        return 1;
-    }
+    if (*err || num_1 < 0) return 1;
 
     push_stack(&proc->stack, (stackElemType)(sqrt(num_1)));
     return 0;
@@ -195,9 +182,7 @@ static int run_sqrt(processor *proc, error_t *err){
 static int run_out(processor *proc, error_t *err){
     while (proc->stack.size != 0){
         stackElemType num = pop_stack(&proc->stack, err);
-        if (*err){
-            return 1;
-        }
+        if (*err) return 1;
         printf("%d ", num);
     }
     printf("\n");
@@ -205,7 +190,7 @@ static int run_out(processor *proc, error_t *err){
 }
 
 int read_file(processor *proc){
-    FILE *stream = fopen("byte_code.txt", "r");
+    FILE *stream = fopen("byte_code", "r");
     fscanf(stream, "%d", &proc->code.size);
     int new_command = 0;
     for (int command_pos = 0; command_pos < proc->code.size; command_pos++){
@@ -243,6 +228,16 @@ int init_code(code_t *data){
     return 0;
 }
 
+int destroy_code(code_t *data){
+    if (data == NULL) return -1;
+
+    free(data->data);
+    data->capacity = 0;
+    data->size = 0;
+
+    return 0;
+}
+
 int init_regs(registers *reg){
     if (reg == NULL) return 1;
 
@@ -251,5 +246,36 @@ int init_regs(registers *reg){
         .regs = {},
     };
 
+    return 0;
+}
+
+int destroy_regs(registers *reg){
+    if (reg == NULL) return -1;
+    reg->regs_num = 0;
+
+    return 0;
+}
+
+static int run_jump(processor *proc, error_t *err, int func){
+    if (func == jmp_func){
+        proc->extantion_point = proc->code.data[proc->extantion_point + 1];
+        return 0;
+    }
+    
+    stackElemType par2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType par1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    for (size_t check_num = 0; check_num < sizeof(jump_func) / sizeof(jump_func[0]); check_num++){
+        if (func == jump_func[check_num].instr){
+            if (jump_func[check_num].func(par1, par2)){
+                proc->extantion_point = proc->code.data[proc->extantion_point + 1];
+            }
+            else proc->extantion_point += 2;
+            return 0;
+        }
+    }
     return 0;
 }
