@@ -31,35 +31,36 @@ CXXFLAGSH_ASM = -I$(READFILEDIR)/
 .PHONY = all clean start start_out_to_file
 
 all: make_folder $(OBJECTS_READ) $(EXECUTABLE_NAME_ASM) $(EXECUTABLE_NAME_SPU)
+	@echo COMPILATION WAS FINISHED
 
 $(OBJECTS_READ): %.o: %.cpp
-	$(CC) $(CFLAGS) -c $^ -o ./$(BUILDDIR)/$@
+	@$(CC) $(CFLAGS) -c $^ -o ./$(BUILDDIR)/$@
 
 #____________________________SPU________________________________
 $(EXECUTABLE_NAME_SPU): $(OBJECTS_SPU)
-	$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_SPU)) -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
+	@$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_SPU)) -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
 
 $(OBJECTS_SPU): %.o: %.cpp
-	$(CC) $(CFLAGS) $(CXXFLAGSH_SPU) -c $^ -o ./$(BUILDDIR)/$@
+	@$(CC) $(CFLAGS) $(CXXFLAGSH_SPU) -c $^ -o ./$(BUILDDIR)/$@
 
 #____________________________ASM________________________________
 $(EXECUTABLE_NAME_ASM): $(OBJECTS_ASM)
-	$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_ASM)) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_READ))  -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
+	@$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_ASM)) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_READ))  -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
 
 $(OBJECTS_ASM): %.o: %.cpp
-	$(CC) $(CFLAGS) $(CXXFLAGSH_ASM) -c $^ -o ./$(BUILDDIR)/$@
+	@$(CC) $(CFLAGS) $(CXXFLAGSH_ASM) -c $^ -o ./$(BUILDDIR)/$@
 
 make_folder:
-	mkdir -p $(BUILDDIR)/$(SPUDIR)/$(STACKDIR)/
-	mkdir -p $(BUILDDIR)/$(ASMDIR)/
-	mkdir -p $(BUILDDIR)/$(READFILEDIR)/
+	@mkdir -p $(BUILDDIR)/$(SPUDIR)/$(STACKDIR)/
+	@mkdir -p $(BUILDDIR)/$(ASMDIR)/
+	@mkdir -p $(BUILDDIR)/$(READFILEDIR)/
 
 start_spu:
-	./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
+	@./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
 
 start_asm:
-	./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
+	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
 
 clean:
-	rm -rf ./$(BUILDDIR)/
-	rm -f dump.txt
+	@rm -rf ./$(BUILDDIR)/
+	@rm -f dump.txt

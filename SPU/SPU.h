@@ -67,14 +67,14 @@ struct jump_instruct {
     compare_func func;
 };
 
-inline bool check_jb(int a, int b) { return a < b; }
-inline bool check_jbe(int a, int b) { return a <= b; }
-inline bool check_ja(int a, int b) { return a > b; }
-inline bool check_jae(int a, int b) { return a >= b; }
-inline bool check_je(int a, int b) { return a == b; }
-inline bool check_jne(int a, int b) { return a != b; }
+bool check_jb(int a, int b);
+bool check_jbe(int a, int b);
+bool check_ja(int a, int b);
+bool check_jae(int a, int b);
+bool check_je(int a, int b);
+bool check_jne(int a, int b);
 
-inline jump_instruct jump_func[] = {    
+static const jump_instruct jump_func[] = {    
     {jb_func, check_jb},
     {jbe_func, check_jbe},
     {ja_func, check_ja},

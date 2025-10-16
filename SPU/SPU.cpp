@@ -279,3 +279,11 @@ static int run_jump(processor *proc, error_t *err, int func){
     }
     return 0;
 }
+
+
+bool check_jb(int a, int b) { return a < b; }
+bool check_jbe(int a, int b) { return a <= b; }
+bool check_ja(int a, int b) { return a > b; }
+bool check_jae(int a, int b) { return a >= b; }
+bool check_je(int a, int b) { return a == b; }
+bool check_jne(int a, int b) { return a != b; }

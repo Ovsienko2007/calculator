@@ -3,7 +3,10 @@
 
 #include <assert.h>
 #include <fcntl.h>
+#include <string.h>
+#include <stdlib.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 struct text_buffer{
     int size;

@@ -5,7 +5,7 @@ int split_text(data_text *data){
 
     char *text = data->buffer.text;
     data->text.lines = (char **)calloc(data->text.lines_count, sizeof(char *));
-    if (data->text.lines == NULL) return NULL;
+    if (data->text.lines == NULL) return -1;
 
     for (int text_position = 0; text_position < data->text.lines_count; text_position++){
         data->text.lines[text_position] = text;
@@ -40,20 +40,20 @@ int read_file(const char * file_name, data_text *data){
     size_t file_len = find_file_size(file_name) / sizeof(char) + 1;
 
     data->buffer.text = (char *)calloc(file_len, sizeof(char));
-    if (data->buffer.text == NULL)  return NULL;
+    if (data->buffer.text == NULL)  return -1;
 
     int file_descriptor = open(file_name, O_RDONLY);
     
     if (file_descriptor == -1){
         close(file_descriptor);
-        return NULL;
+        return 0;
     }
 
     data->buffer.size = read(file_descriptor, data->buffer.text, find_file_size(file_name));
 
     close(file_descriptor);
 
-    if (data->buffer.size == -1) return NULL;
+    if (data->buffer.size == -1) return -1;
 
     data->buffer.text[data->buffer.size] = '\0';
     return 0;
