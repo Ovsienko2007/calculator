@@ -1,3 +1,4 @@
+DUMP
 IN
 PUSH 1
 POPR HUI

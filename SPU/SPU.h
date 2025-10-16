@@ -42,10 +42,10 @@ struct registers{
 };
 
 struct processor{
-    stack_t stack;
     code_t  code;
     int extantion_point;
     registers regs;
+    stack_t stack;
 };
 
 

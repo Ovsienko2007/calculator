@@ -7,11 +7,11 @@ int main(){
     bool init_error = false;
 
     processor proc = init_processor(&init_error);
+
     if (init_error) return 1;
 
     read_file(&proc);
-    
-    
+
     run_code(&proc);
 
     destroy_processor(&proc);
@@ -19,18 +19,18 @@ int main(){
 
 processor init_processor(bool *error){
     processor proc = {
-        .stack           = {},
         .code            = {},
         .extantion_point = 0,
-        .regs            = {}
+        .regs            = {},
+        .stack           = {},
     };
+    if (init_regs(&proc.regs)){
+        if (error) *error = true;
+    }
     if (init_code(&proc.code)){
         if (error) *error = true;
     }
     if (init_stack(&proc.stack)){
-        if (error) *error = true;
-    }
-    if (init_regs(&proc.regs)){
         if (error) *error = true;
     }
     return proc;

@@ -11,11 +11,15 @@ CFLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef \
 EXECUTABLE_NAME_SPU     = SPU.exe
 EXECUTABLE_NAME_ASM     = ASM.exe
 
-BUILDDIR      = Build
+SOURCEDIR      = Source
+INCLUDEDIR     = Include
 
-READFILEDIR   = ReadFile
-SOURCES_READ   =  $(wildcard $(READFILEDIR)/*.cpp)
-OBJECTS_READ   =  $(patsubst %.cpp, %.o, $(SOURCES_READ))
+BUILDDIR       = Build
+
+READFILEDIR    = ReadFile
+SOURCES_READ   = $(wildcard $(READFILEDIR)/*.cpp)
+OBJECTS_READ   = $(patsubst %.cpp, %.o, $(SOURCES_READ))
+
 
 SPUDIR        = SPU
 STACKDIR      = Stack
@@ -23,10 +27,12 @@ SOURCES_SPU   = $(wildcard $(SPUDIR)/*.cpp) $(SPUDIR)/$(STACKDIR)/stack.cpp
 OBJECTS_SPU   = $(patsubst %.cpp, %.o, $(SOURCES_SPU))
 CXXFLAGSH_SPU = -I$(SPUDIR)/$(STACKDIR) -DSHOW_DUMP
 
+
 ASMDIR        = ASM
-SOURCES_ASM   = $(wildcard $(ASMDIR)/*.cpp)
+SOURCES_ASM   = $(wildcard $(ASMDIR)/$(SOURCEDIR)/*.cpp)
 OBJECTS_ASM   = $(patsubst %.cpp, %.o, $(SOURCES_ASM))
-CXXFLAGSH_ASM = -I$(READFILEDIR)/
+INCLUDE_ASM   = $(ASMDIR)/$(INCLUDEDIR)/
+CXXFLAGSH_ASM = -I$(READFILEDIR) -I$(INCLUDE_ASM)
 
 .PHONY = all clean start start_out_to_file
 
@@ -52,7 +58,8 @@ $(OBJECTS_ASM): %.o: %.cpp
 
 make_folder:
 	@mkdir -p $(BUILDDIR)/$(SPUDIR)/$(STACKDIR)/
-	@mkdir -p $(BUILDDIR)/$(ASMDIR)/
+	@mkdir -p $(BUILDDIR)/$(ASMDIR)/$(SOURCEDIR)/
+	@mkdir -p $(BUILDDIR)/$(ASMDIR)/$(INCLUDEDIR)/
 	@mkdir -p $(BUILDDIR)/$(READFILEDIR)/
 
 start_spu:

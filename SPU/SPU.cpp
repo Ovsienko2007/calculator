@@ -190,10 +190,13 @@ static int run_out(processor *proc, error_t *err){
 }
 
 int read_file(processor *proc){
+    int code_size = 0;
+
     FILE *stream = fopen("byte_code", "r");
-    fscanf(stream, "%d", &proc->code.size);
+    if (stream == NULL) return -1;
+    fscanf(stream, "%d", &code_size);
     int new_command = 0;
-    for (int command_pos = 0; command_pos < proc->code.size; command_pos++){
+    for (int command_pos = 0; command_pos < code_size; command_pos++){
         fscanf(stream, "%d", &new_command);
         add_command(&proc->code, new_command, command_pos);
     }
@@ -204,6 +207,7 @@ int read_file(processor *proc){
 int add_command(code_t *data, int new_elem, int command_pos){
     if (data == NULL || data->data==NULL) return 1;
     data->data[command_pos] = new_elem;
+    data->size++;
 
     if (data->size == data->capacity){
         data->capacity *= 2;

@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 struct text_buffer{
-    int size;
+    ssize_t size;
     char *text;
 };
 
