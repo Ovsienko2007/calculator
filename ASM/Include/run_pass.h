@@ -8,6 +8,13 @@
 #include "file_read.h"
 
 const int maxCommandLen = 20;
+const int maxArgLen     = 10;
+
+enum arg_t{
+    num    = 1,
+    reg    = 2,
+    point  = 3,
+};
 
 int run_commands(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr);
 bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr);

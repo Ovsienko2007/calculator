@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "file_read.h"
 
 const int leabelNum     = 10;
@@ -24,8 +25,10 @@ enum instr_name{
     dump_func  = 7,
     out_func   = 8,
     in_func    = 9,
-    pushr_func = 33,
-    popr_func  = 42,
+    pushr_func = 31,
+    popr_func  = 32,
+    pushm_func = 41,
+    popm_func  = 42,
     jmp_func   = 50,
     jb_func    = 51,
     jbe_func   = 52,
@@ -48,11 +51,6 @@ enum assembler_error{
     inside_error         = 7,
 };
 
-enum get_reg_mod{
-    push_reg,
-    pop_reg,
-};
-
 enum regs{
     no_reg = -1,
     rax    = 0,
@@ -65,25 +63,30 @@ enum regs{
     hui    = 7,
 };
 
+enum get_reg_mod{
+    standart_mod,
+    in_brackets_mod,
+};
+
 struct instruct{
     const char *command;
-    instr_name instr;
+    instr_name  instr;
 };
 
 struct registor{
     const char *str_reg;
-    regs reg;
+    regs        reg;
 };
 
 struct labels_arr{
-    int capacity;
-    int size;
+    int  capacity;
+    int  size;
     int *data;
 };
 
 struct labels{
-    int labels_value[leabelNum];
-    bool all_labels_added;
+    int        labels_value[leabelNum];
+    bool       all_labels_added;
     labels_arr labels;
 };
 
@@ -129,10 +132,12 @@ static const instruct jump_func[] = {
 
 int add_command(bytecode *data, int new_elem);
 int add_simple_instructs(char *command, bytecode *buffer, assembler_error *error);
-int add_push_instruct(bytecode *buffer, int command_len, assembler_error *error,
+int add_push_instruct(bytecode *buffer, assembler_error *error,
                       data_text *program, int line);
-int add_pushr_instruct(bytecode *buffer, int command_len, assembler_error *error, 
-                      data_text *program, int line, instr_name instr); //TODO
+int add_pushr_popr_instruct(bytecode *buffer, assembler_error *error, 
+                      data_text *program, int line, instr_name instr);
+int add_pushm_popm_instruct(bytecode *buffer, assembler_error *error,
+                      data_text *program, int line, instr_name instr);
 int add_jump_instruct(char *command, bytecode *buffer, int command_len, assembler_error *error,
                       data_text *program, int line, labels *labels_arr);
 
@@ -140,6 +145,6 @@ int add_jump_instruct(char *command, bytecode *buffer, int command_len, assemble
 int get_jump_line(char *label, labels *labels_arr, assembler_error *error);
 void add_new_label(bytecode *buffer, labels *labels_arr, data_text *program, 
                     const char *command, int line, int command_len, assembler_error *error);
-int get_reg_name(data_text *program, int line, assembler_error *error);
+int get_reg_name(data_text *program, int line, assembler_error *error, get_reg_mod mod);
 int add_label_to_arr(labels *labels_arr, int new_elem);
 #endif

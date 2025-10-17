@@ -7,6 +7,7 @@
 
 const int startCodeSize = 16;
 const int maxRegLen     = 8;
+const int RamLen        = 8;
 
 enum instr_name{
     halt_func  = 0,
@@ -19,8 +20,10 @@ enum instr_name{
     dump_func  = 7,
     out_func   = 8,
     in_func    = 9,
-    pushr_func = 33,
-    popr_func  = 42,
+    pushr_func = 31,
+    popr_func  = 32,
+    pushm_func = 41,
+    popm_func  = 42,
     jmp_func   = 50,
     jb_func    = 51,
     jbe_func   = 52,
@@ -43,12 +46,18 @@ struct registers{
     int regs[maxRegLen];
 };
 
+struct RAM{
+    const int  size;
+    int       *data;
+};
+
 struct processor{
-    stack_t stack;
-    code_t  code;
-    int extantion_point;
-    registers regs;
-    stack_t ret_arr;
+    stack_t    stack;
+    code_t     code;
+    int        extantion_point;
+    registers  regs;
+    stack_t    ret_arr;
+    RAM const *ram;
 };
 
 int init_code(code_t *data);

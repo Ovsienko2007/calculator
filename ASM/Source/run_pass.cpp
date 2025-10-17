@@ -2,6 +2,8 @@
 
 static void del_comment(char *line);
 static bool is_str_space_characters(char *str);
+static arg_t check_arg_type(const char *command);
+static int len_space_symb(const char *str);
 
 int run_commands(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
     if (!run_first_pass(buffer, program, file_name, labels_arr)) return 1;
@@ -10,7 +12,7 @@ int run_commands(bytecode *buffer, data_text *program, const char *file_name, la
         if (run_second_pass(buffer, labels_arr)) return 1;
     }
     if (!labels_arr->all_labels_added){
-        printf("UNDIFIENT LABEL! FUCK YOU!!!!!!!!\n");
+        printf("UNDEFINED LABEL! FUCK YOU!!!!!!!!\n");
         return 1;
     }
 
@@ -44,13 +46,36 @@ bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name,
             program->text.lines[line] += command_len;
         }
         else if (strcmp(command, "PUSH") == 0){
-            add_push_instruct(buffer, command_len, &error, program, line);
-        }
-        else if (strcmp(command, "PUSHR") == 0){
-            add_pushr_instruct(buffer, command_len, &error, program, line, pushr_func);
-        }
-        else if (strcmp(command, "POPR") == 0){
-            add_pushr_instruct(buffer, command_len, &error, program, line, popr_func);
+            program->text.lines[line] += command_len;
+            program->text.lines[line] += len_space_symb(program->text.lines[line]);
+            switch (check_arg_type(program->text.lines[line])){
+                case num:
+                    add_push_instruct(buffer, &error, program, line);
+                    break;
+                case reg:
+                    add_pushr_popr_instruct(buffer, &error, program, line, pushr_func);
+                    break;
+                case point:
+                    add_pushm_popm_instruct(buffer, &error, program, line, pushm_func);
+                    break;
+                default:
+                    error = incorrect_par;
+            }
+        }   
+        else if (strcmp(command, "POP") == 0){
+            program->text.lines[line] += command_len;
+            program->text.lines[line] += len_space_symb(program->text.lines[line]);
+            switch (check_arg_type(program->text.lines[line])){
+                case reg:
+                    add_pushr_popr_instruct(buffer, &error, program, line, popr_func);
+                    break;
+                case point:
+                    add_pushm_popm_instruct(buffer, &error, program, line, popm_func);
+                    break;
+                case num:
+                default:
+                    error = incorrect_par;
+            }
         }
         else if (command[0] == ':'){
             add_new_label(buffer, labels_arr, program, command, line, command_len, &error);
@@ -84,7 +109,8 @@ bool run_second_pass(bytecode *buffer, labels *labels_arr){
     int line = 0;
     for (line = 0; line < buffer->size;){
         switch (buffer->data[line]){
-            case push_func: case pushr_func: case popr_func:
+            case push_func: case pushr_func: case popr_func: 
+            case popm_func: case pushm_func:
                 line += 2;
                 break;
             case add_func: case mul_func:  case sub_func:
@@ -150,4 +176,27 @@ void print_error(const char *file, int line, assembler_error error){
         default:
             break;
     }
+}
+
+static int is_number(const char *str) {
+    int num;
+    return sscanf(str, "%d", &num) == 1;
+}
+
+static arg_t check_arg_type(const char *command){
+    char arg[maxArgLen] = "";
+    sscanf(command, "%s", arg);
+    if (is_number(arg)){
+        return num;
+    }
+    else if (arg[0] == '['){
+        return point;
+    }
+    return reg;
+}
+
+static int len_space_symb(const char *str){
+    int ans = 0;
+    for (; isspace(str[ans]); ans++);
+    return ans;
 }

@@ -13,6 +13,8 @@ static int run_out(processor *proc, error_t *err);
 static int run_jump(processor *proc, error_t *err, int func);
 static int run_call(processor *proc, error_t *err);
 static int run_ret(processor *proc, error_t *err);
+static int run_popm(processor *proc, error_t *err);
+static int run_pushm(processor *proc, error_t *err);
 
 int run_code(processor *proc){
     error_t command_err = no_error;
@@ -20,6 +22,7 @@ int run_code(processor *proc){
     
     bool work_status = true;
     while (proc->extantion_point < proc->code.size && work_status){
+        //printf("%d %d %d\n", proc->regs.regs[0], proc->ram->data[0], proc->ram->data[1]);
         command_err = no_error;
         bool need_step = true;
         command = proc->code.data[proc->extantion_point];
@@ -60,6 +63,12 @@ int run_code(processor *proc){
             break;
         case popr_func:
             run_popr(proc, &command_err);
+            break;
+        case pushm_func:
+            run_pushm(proc, &command_err);
+            break;
+        case popm_func:
+            run_popm(proc, &command_err);
             break;
         case jmp_func: 
         case jb_func: case jbe_func:
@@ -114,7 +123,6 @@ static int run_pushr(processor *proc, error_t *err){
     if (*err) return 1;
     return 0;
 }
-
 static int run_popr(processor *proc, error_t *err){
     proc->extantion_point++;
     int new_reg_value = pop_stack(&proc->stack, err);
@@ -124,6 +132,31 @@ static int run_popr(processor *proc, error_t *err){
         proc->code.data[proc->extantion_point] < 0) return 1;
 
     proc->regs.regs[proc->code.data[proc->extantion_point]] = new_reg_value;
+
+    return 0;
+}
+
+static int run_pushm(processor *proc, error_t *err){
+    proc->extantion_point++;
+    if (proc->code.data[proc->extantion_point] > proc->ram->size ||
+        proc->code.data[proc->extantion_point] < 0) return 1;
+
+    stackElemType new_elem = proc->ram->data[proc->regs.regs[proc->code.data[proc->extantion_point]]];
+
+    push_stack(&proc->stack, new_elem, err);
+    if (*err) return 1;
+    return 0;
+}
+
+static int run_popm(processor *proc, error_t *err){
+    proc->extantion_point++;
+    int new_reg_value = pop_stack(&proc->stack, err);
+
+    if (*err) return 1;
+    if (proc->code.data[proc->extantion_point] > proc->ram->size  ||
+        proc->code.data[proc->extantion_point] < 0) return 1;
+
+    proc->ram->data[proc->regs.regs[proc->code.data[proc->extantion_point]]] = new_reg_value;
 
     return 0;
 }
@@ -149,7 +182,6 @@ static int run_add(processor *proc, error_t *err){
 }
 
 static int run_sub(processor *proc, error_t *err){
-
     stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 

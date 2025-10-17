@@ -1,24 +1,27 @@
-IN
-PUSH 1
-POPR HUI
-POPR RAX
+    IN
+    POP RAX
+
+    PUSH 1
+
+    CALL :1
+
+    OUT
+    HALT
 
 :1
-PUSHR RAX
-PUSHR HUI
-MUL
-POPR HUI
+    PUSH  1
+    PUSH  RAX
+    JA :3     ; [RBX] < RAX
 
-PUSHR RAX
-PUSH 1
-SUB
-POPR RAX
+    PUSH  RAX
 
-PUSH 1
-PUSHR RAX
-JBE :1     ; 1 < RAX
+    PUSH  RAX
+    PUSH  1
+    SUB
+    POP   RAX
 
-PUSHR HUI
-OUT
+    CALL :1
+    MUL
 
-HALT
+:3
+    RET

@@ -2,6 +2,7 @@
 
 static int is_number(const char *str);
 
+
 int add_command(bytecode *data, int new_elem){
     if (data == NULL || data->data==NULL) return 1;
     
@@ -29,14 +30,12 @@ int add_simple_instructs(char *command, bytecode *buffer, assembler_error *error
     return 0;
 }
 
-int add_push_instruct(bytecode *buffer, int command_len, assembler_error *error,
+int add_push_instruct(bytecode *buffer, assembler_error *error,
                       data_text *program, int line){
     if (add_command(buffer, push_func)) *error = inside_error;
 
     int new_elem      = 0;
     int new_elem_size = 0;
-
-    program->text.lines[line] += command_len + 1;
 
     if (sscanf(program->text.lines[line], "%d%n", &new_elem, &new_elem_size) == 0){
         *error = incorrect_par;
@@ -49,28 +48,51 @@ int add_push_instruct(bytecode *buffer, int command_len, assembler_error *error,
     return 1;
 }
 
-int add_pushr_instruct(bytecode *buffer, int command_len, assembler_error *error,
+int add_pushr_popr_instruct(bytecode *buffer, assembler_error *error,
                       data_text *program, int line, instr_name instr){
     if (add_command(buffer, instr)) *error = inside_error;   
-    program->text.lines[line] += command_len;
 
-    int reg = get_reg_name(program, line, error);
+    int reg = get_reg_name(program, line, error, standart_mod);
 
     if (!*error && add_command(buffer, reg)) *error = inside_error;
 
     return 1;
 }
 
+int add_pushm_popm_instruct(bytecode *buffer, assembler_error *error,
+                      data_text *program, int line, instr_name instr){
+    if (add_command(buffer, instr)) *error = inside_error;   
 
-int get_reg_name(data_text *program, int line, assembler_error *error){
+    int reg = get_reg_name(program, line, error, in_brackets_mod);
+
+    if (!*error && add_command(buffer, reg)) *error = inside_error;
+
+    return 1;
+}
+
+int get_reg_name(data_text *program, int line, assembler_error *error, get_reg_mod mod){
     regs new_reg = no_reg;
     int reg_len = 0;
-    char reg[maxRegLen] = {};
+    char reg_str[maxRegLen] = {};
+    char *reg;
 
-    if (sscanf(program->text.lines[line], "%7s%n", reg, &reg_len) == 0){
+    if (sscanf(program->text.lines[line], "%7s%n", reg_str, &reg_len) == 0){
         *error = incorrect_par;
         return -1;
     }
+    reg = reg_str;
+    if (mod == in_brackets_mod){
+        if (reg[0] == '['){
+            reg = reg_str + 1;
+        }
+        else (*error = no_such_reg);
+        
+        if (strchr(reg, ']')){
+            reg[strchr(reg, ']') - reg] = '\0';
+        }
+        else (*error = no_such_reg);
+    }
+
     program->text.lines[line] += reg_len;
 
     for (size_t num_reg = 0; num_reg < sizeof(registor_arr) / sizeof(registor_arr[0]);
@@ -156,9 +178,7 @@ int add_label_to_arr(labels *labels_arr, int new_elem){
     return 0;
 }
 
-
-static int is_number(const char *str) {
+static int is_number(const char *str){
     int num;
     return sscanf(str, "%d", &num) == 1;
 }
-

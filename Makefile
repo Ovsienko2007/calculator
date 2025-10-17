@@ -73,7 +73,7 @@ start_spu:
 	@./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
 
 start_asm:
-	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
+	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) factorial.asm
 
 #_________________________CLEAN_________________________________
 clean:
