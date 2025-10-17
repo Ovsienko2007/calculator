@@ -4,16 +4,14 @@ static void del_comment(char *line);
 static bool is_str_space_characters(char *str);
 
 int run_commands(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
-
-    
     if (!run_first_pass(buffer, program, file_name, labels_arr)) return 1;
-    if (labels_arr->all_labels_added){
+    if (!labels_arr->all_labels_added){
         labels_arr->all_labels_added = true;
-        if (run_second_pass(buffer, *labels_arr)) return 1;
+        if (run_second_pass(buffer, labels_arr)) return 1;
     }
     if (!labels_arr->all_labels_added){
         printf("UNDIFIENT LABEL! FUCK YOU!!!!!!!!\n");
-        return 0;
+        return 1;
     }
 
     return 0;
@@ -43,7 +41,7 @@ bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name,
         else if (strcmp(command, "HALT")  == 0){
             if (add_command(buffer, halt_func)) error = inside_error;
             else program_ended = true;
-            break;
+            program->text.lines[line] += command_len;
         }
         else if (strcmp(command, "PUSH") == 0){
             add_push_instruct(buffer, command_len, &error, program, line);
@@ -81,27 +79,28 @@ bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name,
     return no_errors;
 }
 
-bool run_second_pass(bytecode *buffer, labels labels_arr){
+bool run_second_pass(bytecode *buffer, labels *labels_arr){
     int label_pos = 0;
     int line = 0;
     for (line = 0; line < buffer->size;){
         switch (buffer->data[line]){
-            case halt_func:
-                return 0;
             case push_func: case pushr_func: case popr_func:
                 line += 2;
                 break;
             case add_func: case mul_func:  case sub_func:
             case div_func: case sqrt_func: case dump_func:
-            case out_func: case in_func:
+            case out_func: case in_func:   case ret_func: case halt_func:
                 line += 1;
                 break;
             case jmp_func: case jb_func: case jbe_func: case ja_func: 
-            case jae_func: case je_func: case jne_func:
-                if (0 > labels_arr.labels.data[label_pos] || labels_arr.labels.data[label_pos] > 9){
+            case jae_func: case je_func: case jne_func: case call_func:
+                if (0 > labels_arr->labels.data[label_pos] || labels_arr->labels.data[label_pos] > 9){
                     return 1;
                 }
-                buffer->data[line + 1] = labels_arr.labels_value[labels_arr.labels.data[label_pos]];
+                if (labels_arr->labels_value[labels_arr->labels.data[label_pos]] == -1){
+                    labels_arr->all_labels_added = false;
+                }
+                buffer->data[line + 1] = labels_arr->labels_value[labels_arr->labels.data[label_pos]];
                 label_pos++;
                 line += 2;
                 break;
@@ -109,7 +108,7 @@ bool run_second_pass(bytecode *buffer, labels labels_arr){
                 break;
         }
     }
-    return 1;
+    return 0;
 }
 
 static void del_comment(char *line){

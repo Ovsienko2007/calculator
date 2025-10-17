@@ -19,10 +19,11 @@ int main(){
 
 processor init_processor(bool *error){
     processor proc = {
+        .stack           = {},
         .code            = {},
         .extantion_point = 0,
         .regs            = {},
-        .stack           = {},
+        .ret_arr         = {},
     };
     if (init_regs(&proc.regs)){
         if (error) *error = true;
@@ -31,6 +32,9 @@ processor init_processor(bool *error){
         if (error) *error = true;
     }
     if (init_stack(&proc.stack)){
+        if (error) *error = true;
+    }
+    if (init_stack(&proc.ret_arr)){
         if (error) *error = true;
     }
     return proc;

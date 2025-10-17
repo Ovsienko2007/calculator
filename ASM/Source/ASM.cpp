@@ -29,11 +29,9 @@ int main(int argc, char *argv[]){
 
     init_labels_value(labels_arr.labels_value, leabelNum);
     
-    run_commands(&buffer, &program, file_name, &labels_arr);
-    
-    if (!labels_arr.all_labels_added){
-        printf("UNDIFIENT LABEL! FUCK YOU!!!!!!!!\n");
-        return 0;
+    if (run_commands(&buffer, &program, file_name, &labels_arr)){
+        printf("Compilation was not finished!\n");
+        return 1;
     }
 
     FILE *stream = fopen(file_out_name, "w");

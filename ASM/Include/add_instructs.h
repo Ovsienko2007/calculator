@@ -33,6 +33,8 @@ enum instr_name{
     jae_func   = 54,
     je_func    = 55,
     jne_func   = 56,
+    call_func  = 60,
+    ret_func   = 61,
 };
 
 enum assembler_error{
@@ -110,17 +112,19 @@ static const instruct instruct_arr[] = {
     {"SQRT", sqrt_func},
     {"DUMP", dump_func},
     {"OUT" , out_func },
-    {"IN"  , in_func  },   
+    {"IN"  , in_func  },
+    {"RET" , ret_func },
 };
 
 static const instruct jump_func[] = {
-    {"JMP", jmp_func},
-    {"JB" , jb_func },
-    {"JBE", jbe_func},
-    {"JA" , ja_func },
-    {"JAE", jae_func},
-    {"JE" , je_func },
-    {"JNE", jne_func},
+    {"JMP",  jmp_func },
+    {"JB" ,  jb_func  },
+    {"JBE",  jbe_func },
+    {"JA" ,  ja_func  },
+    {"JAE",  jae_func },
+    {"JE" ,  je_func  },
+    {"JNE",  jne_func },
+    {"CALL", call_func},
 };
 
 int add_command(bytecode *data, int new_elem);

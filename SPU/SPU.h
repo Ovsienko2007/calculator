@@ -8,7 +8,7 @@
 const int startCodeSize = 16;
 const int maxRegLen     = 8;
 
-enum func_name{
+enum instr_name{
     halt_func  = 0,
     push_func  = 1,
     add_func   = 2,
@@ -28,6 +28,8 @@ enum func_name{
     jae_func   = 54,
     je_func    = 55,
     jne_func   = 56,
+    call_func  = 60,
+    ret_func   = 61,
 };
 
 struct code_t{
@@ -42,13 +44,12 @@ struct registers{
 };
 
 struct processor{
+    stack_t stack;
     code_t  code;
     int extantion_point;
     registers regs;
-    stack_t stack;
+    stack_t ret_arr;
 };
-
-
 
 int init_code(code_t *data);
 int init_regs(registers *reg);
@@ -63,7 +64,7 @@ int add_command(code_t *data, int new_elem, int command_pos);
 typedef bool (*compare_func)(int, int);
 
 struct jump_instruct {
-    func_name instr;
+    instr_name instr;
     compare_func func;
 };
 

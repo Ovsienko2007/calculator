@@ -11,6 +11,8 @@ static int run_div(processor *proc, error_t *err);
 static int run_sqrt(processor *proc, error_t *err);
 static int run_out(processor *proc, error_t *err);
 static int run_jump(processor *proc, error_t *err, int func);
+static int run_call(processor *proc, error_t *err);
+static int run_ret(processor *proc, error_t *err);
 
 int run_code(processor *proc){
     error_t command_err = no_error;
@@ -66,6 +68,15 @@ int run_code(processor *proc){
             run_jump(proc, &command_err, command);
             need_step = false;
             break;
+        case call_func:
+            run_call(proc, &command_err);
+            need_step = false;
+            break;
+        case ret_func:
+            run_ret(proc, &command_err);
+            need_step = false;
+            break;
+
         default:
             break;
         }
@@ -284,10 +295,26 @@ static int run_jump(processor *proc, error_t *err, int func){
     return 0;
 }
 
+static int run_ret(processor *proc, error_t *err){
+    int new_extantial_point = pop_stack(&proc->ret_arr, err);
+    if (*err != no_error) return -1;
 
-bool check_jb(int a, int b) { return a < b; }
+    proc->extantion_point = new_extantial_point;
+    return 0;
+}
+
+static int run_call(processor *proc, error_t *err){
+    int new_extantial_point = proc->code.data[proc->extantion_point + 1];
+    push_stack(&proc->ret_arr, proc->extantion_point + 2, err);
+    if (*err != no_error) return -1;
+
+    proc->extantion_point = new_extantial_point;
+    return 0;
+}
+
+bool check_jb (int a, int b) { return a <  b; }
 bool check_jbe(int a, int b) { return a <= b; }
-bool check_ja(int a, int b) { return a > b; }
+bool check_ja (int a, int b) { return a >  b; }
 bool check_jae(int a, int b) { return a >= b; }
-bool check_je(int a, int b) { return a == b; }
+bool check_je (int a, int b) { return a == b; }
 bool check_jne(int a, int b) { return a != b; }

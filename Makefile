@@ -34,17 +34,21 @@ OBJECTS_ASM   = $(patsubst %.cpp, %.o, $(SOURCES_ASM))
 INCLUDE_ASM   = $(ASMDIR)/$(INCLUDEDIR)/
 CXXFLAGSH_ASM = -I$(READFILEDIR) -I$(INCLUDE_ASM)
 
-.PHONY = all clean start start_out_to_file
+.PHONY = all clean start_spu start_asm
 
-all: make_folder $(OBJECTS_READ) $(EXECUTABLE_NAME_ASM) $(EXECUTABLE_NAME_SPU)
-	@echo COMPILATION WAS FINISHED
+all: print_start make_folder $(OBJECTS_READ) $(EXECUTABLE_NAME_ASM) $(EXECUTABLE_NAME_SPU)
+	@echo ====COMPILATION WAS FINISHED====
 
+print_start:
+	@echo ==COMPILATION HAS BEEN STARTED==
+#____________________________READ_______________________________
 $(OBJECTS_READ): %.o: %.cpp
 	@$(CC) $(CFLAGS) -c $^ -o ./$(BUILDDIR)/$@
 
 #____________________________SPU________________________________
 $(EXECUTABLE_NAME_SPU): $(OBJECTS_SPU)
 	@$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_SPU)) -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
+	@echo SPU was compiled!
 
 $(OBJECTS_SPU): %.o: %.cpp
 	@$(CC) $(CFLAGS) $(CXXFLAGSH_SPU) -c $^ -o ./$(BUILDDIR)/$@
@@ -52,22 +56,27 @@ $(OBJECTS_SPU): %.o: %.cpp
 #____________________________ASM________________________________
 $(EXECUTABLE_NAME_ASM): $(OBJECTS_ASM)
 	@$(CC) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_ASM)) $(addprefix ./$(BUILDDIR)/, $(OBJECTS_READ))  -o ./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
+	@echo ASM was compiled!
 
 $(OBJECTS_ASM): %.o: %.cpp
 	@$(CC) $(CFLAGS) $(CXXFLAGSH_ASM) -c $^ -o ./$(BUILDDIR)/$@
 
+#_____________________CREAT FOLDERS_____________________________
 make_folder:
 	@mkdir -p $(BUILDDIR)/$(SPUDIR)/$(STACKDIR)/
 	@mkdir -p $(BUILDDIR)/$(ASMDIR)/$(SOURCEDIR)/
-	@mkdir -p $(BUILDDIR)/$(ASMDIR)/$(INCLUDEDIR)/
 	@mkdir -p $(BUILDDIR)/$(READFILEDIR)/
+	@echo Folders were created!
 
+#________________________STARTS_________________________________
 start_spu:
 	@./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
 
 start_asm:
 	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM)
 
+#_________________________CLEAN_________________________________
 clean:
 	@rm -rf ./$(BUILDDIR)/
 	@rm -f dump.txt
+	@echo Cleaning completed!
