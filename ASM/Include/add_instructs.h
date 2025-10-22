@@ -38,6 +38,8 @@ enum instr_name{
     jne_func   = 56,
     call_func  = 60,
     ret_func   = 61,
+    show_func  = 100,
+    clear_func = 101,
 };
 
 enum assembler_error{
@@ -108,15 +110,17 @@ static const registor registor_arr[] = {
 };
 
 static const instruct instruct_arr[] = {
-    {"ADD" , add_func },
-    {"MUL" , mul_func },
-    {"SUB" , sub_func },
-    {"DIV" , div_func },
-    {"SQRT", sqrt_func},
-    {"DUMP", dump_func},
-    {"OUT" , out_func },
-    {"IN"  , in_func  },
-    {"RET" , ret_func },
+    {"ADD" ,  add_func },
+    {"MUL" ,  mul_func },
+    {"SUB" ,  sub_func },
+    {"DIV" ,  div_func },
+    {"SQRT",  sqrt_func},
+    {"DUMP",  dump_func},
+    {"OUT" ,  out_func },
+    {"IN"  ,  in_func  },
+    {"RET" ,  ret_func },
+    {"SHOW",  show_func},
+    {"CLEAR", clear_func}
 };
 
 static const instruct jump_func[] = {

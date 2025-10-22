@@ -15,6 +15,8 @@ static int run_call(processor *proc, error_t *err);
 static int run_ret(processor *proc, error_t *err);
 static int run_popm(processor *proc, error_t *err);
 static int run_pushm(processor *proc, error_t *err);
+static int run_show(processor *proc, error_t *err);
+static void run_clear();
 
 int run_code(processor *proc){
     error_t command_err = no_error;
@@ -69,6 +71,12 @@ int run_code(processor *proc){
             break;
         case popm_func:
             run_popm(proc, &command_err);
+            break;
+        case show_func:
+            run_show(proc, &command_err);
+            break;
+        case clear_func:
+            run_clear();
             break;
         case jmp_func: 
         case jb_func: case jbe_func:
@@ -304,6 +312,11 @@ int destroy_regs(registers *reg){
 }
 
 static int run_jump(processor *proc, error_t *err, int func){
+    if (proc == NULL){
+        *err = null_data_ptr;
+        return 0;
+    }
+    
     if (func == jmp_func){
         proc->extantion_point = proc->code.data[proc->extantion_point + 1];
         return 0;
@@ -328,6 +341,11 @@ static int run_jump(processor *proc, error_t *err, int func){
 }
 
 static int run_ret(processor *proc, error_t *err){
+    if (proc == NULL){
+        *err = null_data_ptr;
+        return 0;
+    }
+    
     int new_extantial_point = pop_stack(&proc->ret_arr, err);
     if (*err != no_error) return -1;
 
@@ -336,6 +354,11 @@ static int run_ret(processor *proc, error_t *err){
 }
 
 static int run_call(processor *proc, error_t *err){
+    if (proc == NULL){
+        *err = null_data_ptr;
+        return 0;
+    }
+    
     int new_extantial_point = proc->code.data[proc->extantion_point + 1];
     push_stack(&proc->ret_arr, proc->extantion_point + 2, err);
     if (*err != no_error) return -1;
@@ -343,7 +366,36 @@ static int run_call(processor *proc, error_t *err){
     proc->extantion_point = new_extantial_point;
     return 0;
 }
+static int run_show(processor *proc, error_t *err){
+    if (proc == NULL){
+        *err = null_data_ptr;
+        return 0;
+    }
+    
+    for (int y = 0; y < yImgSize; y++){
+        for (int x = 0; x < xImgSize; x++){
+            unsigned int out_elem = proc->ram->data[y * xImgSize + x];
+            int r = out_elem / 256 / 256 / 256; //TODO remake
+            int g = out_elem / 256 / 256 % 256;
+            int b = out_elem / 256 % 256;
+            int value = out_elem % 256;
 
+            printf("\033[48;2;%d;%d;%dm", r, g, b);
+            printf("%c", value);
+            printf("\033[0m");
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+static void run_clear(){
+    fflush(stdout);
+    usleep(frameUpdateTime);
+
+    printf("\033[H");
+    return;
+}
 bool check_jb (int a, int b) { return a <  b; }
 bool check_jbe(int a, int b) { return a <= b; }
 bool check_ja (int a, int b) { return a >  b; }

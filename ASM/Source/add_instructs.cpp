@@ -170,8 +170,8 @@ int add_label_to_arr(labels *labels_arr, int new_elem){
     labels_arr->labels.size++;
 
     if (labels_arr->labels.size == labels_arr->labels.capacity){
-        labels_arr->labels.size *= 2;
-        int *new_data = (int *)realloc(labels_arr->labels.data, (labels_arr->labels.size) * sizeof(int));
+        labels_arr->labels.capacity *= 2;
+        int *new_data = (int *)realloc(labels_arr->labels.data, (labels_arr->labels.capacity) * sizeof(int));
         if (new_data == NULL) return 1;
         labels_arr->labels.data = new_data;
     }

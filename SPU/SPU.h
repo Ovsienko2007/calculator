@@ -2,12 +2,19 @@
 #define CALCULATOR_H_
 
 #include <math.h>
+
 #include "string.h"
 #include "stack.h"
 
-const int startCodeSize = 16;
-const int maxRegLen     = 8;
-const int RamLen        = 8;
+
+const int startCodeSize   = 16;
+const int maxRegLen       = 8;
+
+
+const int ramSize         = 12600;
+const int xImgSize        = 210;
+const int yImgSize        = 60;
+const int frameUpdateTime = 27300;
 
 enum instr_name{
     halt_func  = 0,
@@ -33,6 +40,8 @@ enum instr_name{
     jne_func   = 56,
     call_func  = 60,
     ret_func   = 61,
+    show_func  = 100,
+    clear_func = 101,
 };
 
 struct code_t{

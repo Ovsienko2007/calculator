@@ -1,12 +1,17 @@
 #include "SPU.h"
 
+void check_argument(int argc, char **argv);
+
 processor init_processor(bool *error, RAM const *ram);
 int destroy_processor(processor *proc);
 
 RAM init_ram(bool *error);
 int destroy_ram(RAM const *ram);
 
-int main(){
+int main(int argc, char **argv){
+    
+    check_argument(argc, argv);
+
     bool init_error = false;
     RAM ram = init_ram(&init_error);
     if (init_error){
@@ -25,6 +30,8 @@ int main(){
     read_file(&proc);
 
     run_code(&proc);
+
+    printf("\033[?25h");
 
     destroy_processor(&proc);
 }
@@ -65,8 +72,8 @@ int destroy_processor(processor *proc){
 
 RAM init_ram(bool *error){
     RAM ram = {
-        .size = 50,
-        .data = (int *)calloc(50, sizeof(int)),
+        .size = ramSize,
+        .data = (int *)calloc(ramSize, sizeof(int)),
     };
     if (ram.data == NULL) *error = true;
 
@@ -79,4 +86,18 @@ int destroy_ram(RAM const *ram){
     free(ram->data);
 
     return 0;
+}
+
+void check_argument(int argc, char **argv){
+    if (argc > 1){
+        if (strcmp(argv[1], "video") == 0){
+            
+            printf("\033[?25l");
+            for (int line = 0; line < yImgSize + 1; line++){
+                printf("\n");
+            }
+            
+        }
+    }
+    return;
 }

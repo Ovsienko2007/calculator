@@ -70,10 +70,13 @@ make_folder:
 
 #________________________STARTS_________________________________
 start_spu:
-	@./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
+	@./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU) video
 
 start_asm:
-	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) factorial.asm
+	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) video.asm
+
+start_img:
+	python3 mk_img.py
 
 #_________________________CLEAN_________________________________
 clean:
