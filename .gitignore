@@ -3,6 +3,6 @@ Build/
 prog.txt
 dump.txt
 byte_code
-video.mp4
+*.mp4
 image.png
 video.asm

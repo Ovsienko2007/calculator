@@ -2,9 +2,8 @@
 
 static int is_number(const char *str);
 
-
 int add_command(bytecode *data, int new_elem){
-    if (data == NULL || data->data==NULL) return 1;
+    if (data == NULL || data->data == NULL) return 1;
     
     data->data[data->size] = new_elem;
     data->size++;

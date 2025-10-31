@@ -7,7 +7,7 @@
 #include "stack.h"
 
 
-const int startCodeSize   = 16;
+const int kStartCodeSize   = 16;
 const int maxRegLen       = 8;
 
 

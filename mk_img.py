@@ -2,7 +2,7 @@ import cv2
 import sys
 
 default_video_name       = "video.mp4"
-default_code_file_name = "video.asm"
+default_code_file_name   = "video.asm"
 
 byte_size              = 256
 space_ANCII            = 32
@@ -46,7 +46,7 @@ def loading_displaying_saving_enhanced(video_name, code_file_name):
                 for x_pos in range(enhanced_img.shape[1]):
                     if y_pos < enhanced_img.shape[0]:
                         (b, g, r) = enhanced_img[y_pos, x_pos]
-                        new_elem = int(r) * byte_size ** 3 + int(g) * byte_size ** 2 + int(b) * byte_size + space_ANCII
+                        new_elem = int(r) * byte_size ** 3 + int(g) * byte_size ** 2 + int(b) * byte_size + space_ANCII # TODO ANSI?
                         file.write(f"PUSH {new_elem}\n"
                                     "POP [RAX]\n"
                                     "PUSH 1\n"

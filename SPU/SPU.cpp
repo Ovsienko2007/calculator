@@ -24,7 +24,6 @@ int run_code(processor *proc){
     
     bool work_status = true;
     while (proc->extantion_point < proc->code.size && work_status){
-        //printf("%d %d %d\n", proc->regs.regs[0], proc->ram->data[0], proc->ram->data[1]);
         command_err = no_error;
         bool need_step = true;
         command = proc->code.data[proc->extantion_point];
@@ -275,8 +274,8 @@ int init_code(code_t *data){
 
     *data = {
         .size = 0,
-        .capacity = startCodeSize,
-        .data = (int *)calloc(startCodeSize, sizeof(int))
+        .capacity = kStartCodeSize,
+        .data = (int *)calloc(kStartCodeSize, sizeof(int))
     };
 
     if (data->data == NULL) return 1;
@@ -375,7 +374,7 @@ static int run_show(processor *proc, error_t *err){
     for (int y = 0; y < yImgSize; y++){
         for (int x = 0; x < xImgSize; x++){
             unsigned int out_elem = proc->ram->data[y * xImgSize + x];
-            int r = out_elem / 256 / 256 / 256; //TODO remake
+            int r = out_elem / 256 / 256 / 256; //TODO remake (I am stupid)
             int g = out_elem / 256 / 256 % 256;
             int b = out_elem / 256 % 256;
             int value = out_elem % 256;

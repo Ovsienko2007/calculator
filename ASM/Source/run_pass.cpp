@@ -8,9 +8,11 @@ static int len_space_symb(const char *str);
 int run_commands(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
     if (!run_first_pass(buffer, program, file_name, labels_arr)) return 1;
     if (!labels_arr->all_labels_added){
+        fprintf(stderr, "2");
         labels_arr->all_labels_added = true;
         if (run_second_pass(buffer, labels_arr)) return 1;
     }
+    fprintf(stderr, "3");
     if (!labels_arr->all_labels_added){
         printf("UNDEFINED LABEL! FUCK YOU!!!!!!!!\n");
         return 1;
@@ -20,6 +22,7 @@ int run_commands(bytecode *buffer, data_text *program, const char *file_name, la
 }
 
 bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
+    fprintf(stderr, "1");
     char command[maxCommandLen] = {};
     bool program_ended = false;
     bool no_errors = true;
@@ -113,8 +116,8 @@ bool run_second_pass(bytecode *buffer, labels *labels_arr){
             case popm_func: case pushm_func:
                 line += 2;
                 break;
-            case add_func: case mul_func:  case sub_func:
-            case div_func: case sqrt_func: case dump_func:
+            case add_func: case mul_func:  case sub_func: case clear_func:
+            case div_func: case sqrt_func: case dump_func: case show_func: 
             case out_func: case in_func:   case ret_func: case halt_func:
                 line += 1;
                 break;

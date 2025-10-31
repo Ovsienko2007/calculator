@@ -76,10 +76,10 @@ start_asm:
 	@./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) video.asm
 
 start_img:
-	python3 mk_img.py
+	python3 mk_img.py video.mp4
 
 #_________________________CLEAN_________________________________
-clean:
+clean:	
 	@rm -rf ./$(BUILDDIR)/
 	@rm -f dump.txt
 	@echo Cleaning completed!

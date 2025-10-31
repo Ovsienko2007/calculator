@@ -1,6 +1,6 @@
 #include "asm.h"
 
-static void init_labels_value(int *arr, int size);
+static void init_labels_value(int *labels, int size);
 
 int main(int argc, char *argv[]){
     const char *file_name     = "";
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
     bytecode buffer = {};
     init_code(&buffer);
 
-    labels labels_arr = { // TODO remake
+    labels labels_arr = {
         .labels_value = {},
         .all_labels_added = true,
         .labels = {
@@ -51,9 +51,9 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-static void init_labels_value(int *arr, int size){
+static void init_labels_value(int *labels, int size){
     for(int i = 0; i < size; i++) {
-        arr[i] = -1;
+        labels[i] = -1;
     }
 }
 
@@ -62,8 +62,8 @@ int init_code(bytecode *data){
 
     *data = {
         .size = 0,
-        .capacity = startCodeSize,
-        .data = (int *)calloc(startCodeSize, sizeof(int))
+        .capacity = kStartCodeSize,
+        .data = (int *)calloc(kStartCodeSize, sizeof(int))
     };
 
     if (data->data == NULL) return 1;
