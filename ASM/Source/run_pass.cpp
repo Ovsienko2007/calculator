@@ -108,9 +108,9 @@ bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name,
 }
 
 bool run_second_pass(bytecode *buffer, labels *labels_arr){
-    int label_pos = 0;
-    int line = 0;
-    for (line = 0; line < buffer->size;){
+    size_t label_pos = 0;
+
+    for (size_t line = 0; line < buffer->size;){
         switch (buffer->data[line]){
             case push_func: case pushr_func: case popr_func: 
             case popm_func: case pushm_func:
@@ -123,20 +123,23 @@ bool run_second_pass(bytecode *buffer, labels *labels_arr){
                 break;
             case jmp_func: case jb_func: case jbe_func: case ja_func: 
             case jae_func: case je_func: case jne_func: case call_func:
-                if (0 > labels_arr->labels.data[label_pos] || labels_arr->labels.data[label_pos] > 9){
-                    return 1;
+                if (buffer->data[line + 1] == -1){
+                    if (labels_arr->all_labels.size < label_pos ||
+                        labels_arr->labels_pos_arr.data[labels_arr->all_labels.data[label_pos]] == -1){
+                            labels_arr->all_labels_added = false;
+                    }
+
+                    buffer->data[line + 1] = labels_arr->labels_pos_arr.data[labels_arr->all_labels.data[label_pos]];
+                    label_pos++;
                 }
-                if (labels_arr->labels_value[labels_arr->labels.data[label_pos]] == -1){
-                    labels_arr->all_labels_added = false;
-                }
-                buffer->data[line + 1] = labels_arr->labels_value[labels_arr->labels.data[label_pos]];
-                label_pos++;
+
                 line += 2;
                 break;
             default:
                 break;
         }
     }
+
     return 0;
 }
 

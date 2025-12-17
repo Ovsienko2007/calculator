@@ -13,7 +13,7 @@
 
     PUSH 0
     PUSH RAX
-    JE   :2
+    JE   :100
 
     PUSH RAX
 
@@ -26,7 +26,7 @@
     MUL
     RET
 
-:2
+:100
     PUSH 1
     RET
 

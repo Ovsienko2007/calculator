@@ -6,3 +6,4 @@ byte_code
 *.mp4
 image.png
 video.asm
+.cache/

@@ -1,6 +1,6 @@
 #include "asm.h"
 
-static void init_labels_value(int *labels, int size);
+static void init_labels_value(int *labels, size_t size);
 
 int main(int argc, char *argv[]){
     const char *file_name     = "";
@@ -18,16 +18,19 @@ int main(int argc, char *argv[]){
     init_code(&buffer);
 
     labels labels_arr = {
-        .labels_value = {},
         .all_labels_added = true,
-        .labels = {
-            .capacity   = minLabelsLen,
-            .size       = 0,
-            .data = (int *)calloc(minLabelsLen, sizeof(int)),
+        .all_labels = {
+            .capacity = minLabelsLen,
+            .data     = (int *)calloc(minLabelsLen, sizeof(int)),
+        },
+        .labels_pos_arr = {
+            .size     = minLabelsLen,
+            .data     = (int *)calloc(minLabelsLen, sizeof(int)),
         },
     };
 
-    init_labels_value(labels_arr.labels_value, leabelNum);
+    init_labels_value(labels_arr.all_labels.data, labels_arr.all_labels.capacity);
+    init_labels_value(labels_arr.labels_pos_arr.data, labels_arr.labels_pos_arr.size);
     
     if (run_commands(&buffer, &program, file_name, &labels_arr)){
         printf("Compilation was not finished!\n");
@@ -41,8 +44,8 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    fprintf(stream, "%d ", buffer.size);
-    for (int cmd_pos = 0; cmd_pos < buffer.size; cmd_pos++){
+    fprintf(stream, "%lu ", buffer.size);
+    for (size_t cmd_pos = 0; cmd_pos < buffer.size; cmd_pos++){
         fprintf(stream, "%d ", buffer.data[cmd_pos]);
     }
     fclose(stream);
@@ -51,8 +54,8 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-static void init_labels_value(int *labels, int size){
-    for(int i = 0; i < size; i++) {
+static void init_labels_value(int *labels, size_t size){
+    for(size_t i = 0; i < size; i++) {
         labels[i] = -1;
     }
 }

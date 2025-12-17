@@ -66,7 +66,7 @@ enum regs{
 };
 
 enum get_reg_mod{
-    standart_mod,
+    standard_mod,
     in_brackets_mod,
 };
 
@@ -80,21 +80,26 @@ struct registor{
     regs        reg;
 };
 
+struct labels_pos_arr_t{
+    size_t  size;
+    int *data;
+};
+
 struct labels_arr{
-    int  capacity;
-    int  size;
+    size_t  size;
+    size_t  capacity;
     int *data;
 };
 
 struct labels{
-    int        labels_value[leabelNum];
-    bool       all_labels_added;
-    labels_arr labels;
+    bool            all_labels_added;
+    labels_arr      all_labels;
+    labels_pos_arr_t  labels_pos_arr;
 };
 
 struct bytecode{
-    int size;
-    int capacity;
+    size_t size;
+    size_t capacity;
     int *data;
 };
 
@@ -150,5 +155,6 @@ int get_jump_line(char *label, labels *labels_arr, assembler_error *error);
 void add_new_label(bytecode *buffer, labels *labels_arr, data_text *program, 
                     const char *command, int line, int command_len, assembler_error *error);
 int get_reg_name(data_text *program, int line, assembler_error *error, get_reg_mod mod);
-int add_label_to_arr(labels *labels_arr, int new_elem);
+int add_label_to_arr(labels *labels_arr, int new_elem, size_t pos, assembler_error *error);
+
 #endif
