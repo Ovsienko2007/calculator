@@ -1,21 +1,32 @@
 #include "SPU.h"
 
 static int run_pushr(processor *proc, error_t *err);
-static int run_popr(processor *proc, error_t *err);
-static int run_in(processor *proc, error_t *err);
-static int run_push(processor *proc, error_t *err);
-static int run_add(processor *proc, error_t *err);
-static int run_mul(processor *proc, error_t *err);
-static int run_sub(processor *proc, error_t *err);
-static int run_div(processor *proc, error_t *err);
-static int run_sqrt(processor *proc, error_t *err);
-static int run_out(processor *proc, error_t *err);
-static int run_jump(processor *proc, error_t *err, int func);
-static int run_call(processor *proc, error_t *err);
-static int run_ret(processor *proc, error_t *err);
-static int run_popm(processor *proc, error_t *err);
+static int run_popr (processor *proc, error_t *err);
+static int run_in   (processor *proc, error_t *err);
+static int run_push (processor *proc, error_t *err);
+static int run_add  (processor *proc, error_t *err);
+static int run_mul  (processor *proc, error_t *err);
+static int run_sub  (processor *proc, error_t *err);
+static int run_div  (processor *proc, error_t *err);
+static int run_sqrt (processor *proc, error_t *err);
+static int run_out  (processor *proc, error_t *err);
+static int run_jump (processor *proc, error_t *err, int func);
+static int run_call (processor *proc, error_t *err);
+static int run_ret  (processor *proc, error_t *err);
+static int run_popm (processor *proc, error_t *err);
 static int run_pushm(processor *proc, error_t *err);
-static int run_show(processor *proc, error_t *err);
+static int run_show (processor *proc, error_t *err);
+
+static int run_pow_func   (processor *proc, error_t *err);
+static int run_is_e_func  (processor *proc, error_t *err);
+static int run_is_ne_func (processor *proc, error_t *err);
+static int run_is_be_func (processor *proc, error_t *err);
+static int run_is_b_func  (processor *proc, error_t *err);
+static int run_is_ae_func (processor *proc, error_t *err);
+static int run_is_a_func  (processor *proc, error_t *err);
+static int run_and_func   (processor *proc, error_t *err);
+static int run_or_func    (processor *proc, error_t *err);
+
 static void run_clear();
 
 int run_code(processor *proc){
@@ -50,6 +61,33 @@ int run_code(processor *proc){
         case dump_func:
             USER_DUMP(&proc->stack);
             break;
+        case pow_func  : 
+            run_pow_func   (proc, &command_err);
+            break; 
+        case is_e_func : 
+            run_is_e_func  (proc, &command_err);
+            break; 
+        case is_ne_func: 
+            run_is_ne_func (proc, &command_err);
+            break; 
+        case is_be_func: 
+            run_is_be_func (proc, &command_err);
+            break; 
+        case is_b_func : 
+            run_is_b_func  (proc, &command_err);
+            break; 
+        case is_ae_func: 
+            run_is_ae_func (proc, &command_err);
+            break; 
+        case is_a_func : 
+            run_is_a_func  (proc, &command_err);
+            break; 
+        case and_func  : 
+            run_and_func   (proc, &command_err);
+            break; 
+        case or_func   : 
+            run_or_func    (proc, &command_err);
+            break; 
         case out_func:
             run_out(proc, &command_err);
             break;
@@ -187,6 +225,106 @@ static int run_add(processor *proc, error_t *err){
     push_stack(&proc->stack, num_1 + num_2);
     return 0;
 }
+
+static int run_pow_func   (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, (int)pow(num_1, num_2));
+    return 0;
+}
+
+static int run_is_e_func  (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 == num_2);
+    return 0;
+}
+
+static int run_is_ne_func (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 != num_2);
+    return 0;
+}
+
+static int run_is_be_func (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 <= num_2);
+    return 0;
+}
+
+static int run_is_b_func  (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 < num_2);
+    return 0;
+}
+
+static int run_is_ae_func (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 >= num_2);
+    return 0;
+}
+
+static int run_is_a_func  (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 > num_2);
+    return 0;
+}
+
+static int run_and_func   (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 && num_2);
+    return 0;
+}
+
+static int run_or_func    (processor *proc, error_t *err){
+    stackElemType num_1 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    stackElemType num_2 = pop_stack(&proc->stack, err);
+    if (*err) return 1;
+
+    push_stack(&proc->stack, num_1 || num_2);
+    return 0;
+}
+
 
 static int run_sub(processor *proc, error_t *err){
     stackElemType num_1 = pop_stack(&proc->stack, err);
@@ -395,6 +533,7 @@ static void run_clear(){
     printf("\033[H");
     return;
 }
+
 bool check_jb (int a, int b) { return a <  b; }
 bool check_jbe(int a, int b) { return a <= b; }
 bool check_ja (int a, int b) { return a >  b; }

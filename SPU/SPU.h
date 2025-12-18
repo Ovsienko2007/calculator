@@ -42,6 +42,15 @@ enum instr_name{
     ret_func   = 61,
     show_func  = 100,
     clear_func = 101,
+    pow_func   = 110,
+    is_e_func  = 120,
+    is_ne_func = 121,
+    is_be_func = 123,
+    is_b_func  = 124,
+    is_ae_func = 125,
+    is_a_func  = 126,
+    and_func   = 130,
+    or_func    = 131,
 };
 
 struct code_t{

@@ -40,6 +40,15 @@ enum instr_name{
     ret_func   = 61,
     show_func  = 100,
     clear_func = 101,
+    pow_func   = 110,
+    is_e_func  = 120,
+    is_ne_func = 121,
+    is_be_func = 123,
+    is_b_func  = 124,
+    is_ae_func = 125,
+    is_a_func  = 126,
+    and_func   = 130,
+    or_func    = 131,
 };
 
 enum assembler_error{
@@ -115,17 +124,26 @@ static const registor registor_arr[] = {
 };
 
 static const instruct instruct_arr[] = {
-    {"ADD" ,  add_func },
-    {"MUL" ,  mul_func },
-    {"SUB" ,  sub_func },
-    {"DIV" ,  div_func },
-    {"SQRT",  sqrt_func},
-    {"DUMP",  dump_func},
-    {"OUT" ,  out_func },
-    {"IN"  ,  in_func  },
-    {"RET" ,  ret_func },
-    {"SHOW",  show_func},
-    {"CLEAR", clear_func}
+    {"ADD"  , add_func  },
+    {"MUL"  , mul_func  },
+    {"SUB"  , sub_func  },
+    {"DIV"  , div_func  },
+    {"SQRT" , sqrt_func },
+    {"DUMP" , dump_func },
+    {"OUT"  , out_func  },
+    {"IN"   , in_func   },
+    {"RET"  , ret_func  },
+    {"SHOW" , show_func },
+    {"CLEAR", clear_func},
+    {"POW"  , pow_func  },
+    {"ISE"  , is_e_func },
+    {"ISNE" , is_ne_func},
+    {"ISBE" , is_be_func},
+    {"ISB"  , is_b_func },
+    {"ISAE" , is_ae_func},
+    {"ISA"  , is_a_func },
+    {"AND"  , and_func  },
+    {"OR"   , or_func   },
 };
 
 static const instruct jump_func[] = {

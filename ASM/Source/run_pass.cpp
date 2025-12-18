@@ -116,11 +116,6 @@ bool run_second_pass(bytecode *buffer, labels *labels_arr){
             case popm_func: case pushm_func:
                 line += 2;
                 break;
-            case add_func: case mul_func:  case sub_func: case clear_func:
-            case div_func: case sqrt_func: case dump_func: case show_func: 
-            case out_func: case in_func:   case ret_func: case halt_func:
-                line += 1;
-                break;
             case jmp_func: case jb_func: case jbe_func: case ja_func: 
             case jae_func: case je_func: case jne_func: case call_func:
                 if (buffer->data[line + 1] == -1){
@@ -135,7 +130,11 @@ bool run_second_pass(bytecode *buffer, labels *labels_arr){
 
                 line += 2;
                 break;
+            case add_func: case mul_func:  case sub_func: case clear_func:
+            case div_func: case sqrt_func: case dump_func: case show_func: 
+            case out_func: case in_func:   case ret_func: case halt_func:
             default:
+                line += 1;
                 break;
         }
     }
