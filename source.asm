@@ -1,260 +1,169 @@
-    IN
-    POP RCX
-
-    ; HUI = 0;
-    PUSH RCX ;elem_size = size_y / 3; 
-    PUSH 3
-    DIV
-    POP RDX
-    
-    PUSH RCX ;radius = elem_size / 2;
-    PUSH 6
-    DIV
-    POP RBX
-    
-    PUSH RBX
-    PUSH 2
-    DIV
-    PUSH 0
-    JNE :5 ;radius % 2 != 0
-
-    PUSH 1
-    PUSH RAX
-    ADD
-    POP  RAX ;s += 1
-
+IN
+PUSH 0  ; a <- 0
+POP  RBX
+POP [RBX]
+IN
+PUSH 1  ; b <- 1
+POP  RBX
+POP [RBX]
+IN
+PUSH 2  ; c <- 2
+POP  RBX
+POP [RBX]
+PUSH 0
+POP  RBX
+PUSH [RBX]
+PUSH 0
+ISE
+PUSH 0
+JE :1
+PUSH 1
+POP  RBX
+PUSH [RBX]
+PUSH 0
+ISE
+PUSH 0
+JE :3
+PUSH 2
+POP  RBX
+PUSH [RBX]
+PUSH 0
+ISE
+PUSH 0
+JE :5
+PUSH 123321
+OUT
+JMP :4
 :5
-    PUSH RFX
-    PUSH REX 
-    PUSH 210
-    DIV
-    ADD
-    POP RFX ; y += x / 210
-    
-    PUSH REX
-    PUSH REX 
-    PUSH 210
-    DIV
-    PUSH 210
-    MUL
-    SUB
-    POP REX ; x %= 210
-
-    PUSH 60
-    PUSH RFX 
-    JE :0 ;y == 60 
-
-    CALL :7 ;add elem to []
-
-    PUSH 1
-    PUSH REX
-    ADD
-    POP REX ; x += 1
-
-    PUSH 1 
-    PUSH HUI
-    ADD
-    POP  HUI ;ans++
-
-    JMP :5    ; x == 210
-
-:0        
-    SHOW
-    HALT
-; ______________________dist_from_center__________________________
-:3 ;dist_from_center: RCX position -> position
-    POP RGX
-
-    PUSH RBX
-    PUSH RBX 
-    PUSH 2
-    DIV
-    PUSH 2
-    MUL
-    SUB ; radius % 2
-
-    PUSH 1
-    JE :4  ; radius % 2 == 1 
-
-    PUSH RBX
-    PUSH RGX
-    JB :4  ; position < radius
-
-    PUSH RGX 
-    PUSH RBX
-    SUB
-    CALL :1
-    PUSH 1
-    ADD
-    RET ;abs(position - radius) + 1
-
+PUSH 321
+OUT
 :4
-    PUSH RBX
-    PUSH RGX
-    SUB
-    RET ;radius - position
-    
-; _____________________________ABS_______________________________
-:1  ;ABS: element -> abs(element)
-    POP  RGX
-
-    PUSH RGX
-    PUSH 0
-    JAE :2 ;RGM > 0
-
-    PUSH 0
-    PUSH RGX
-    SUB
-    RET ;-RGM
-
+JMP :2
+:3
+PUSH 0
+PUSH 2
+POP  RBX
+PUSH [RBX]
+PUSH 1
+POP  RBX
+PUSH [RBX]
+DIV
+SUB
+PUSH 3  ; ans <- 3
+POP  RBX
+POP [RBX]
+PUSH 3
+POP  RBX
+PUSH [RBX]
+OUT
 :2
-    PUSH RGX
-    RET ;RGM
-; __________________________ADD_ELEM_______________________________
+JMP :0
+:1
+PUSH 1
+POP  RBX
+PUSH [RBX]
+PUSH 2
+POW
+PUSH 4
+PUSH 0
+POP  RBX
+PUSH [RBX]
+MUL
+PUSH 2
+POP  RBX
+PUSH [RBX]
+MUL
+SUB
+PUSH 3  ; D <- 3
+POP  RBX
+POP [RBX]
+PUSH 3
+POP  RBX
+PUSH [RBX]
+PUSH 0
+ISA
+PUSH 0
+JE :7
+PUSH 3
+POP  RBX
+PUSH [RBX]
+SQRT
+PUSH 4  ; D_sqrt <- 4
+POP  RBX
+POP [RBX]
+PUSH 4
+POP  RBX
+PUSH [RBX]
+PUSH 1
+POP  RBX
+PUSH [RBX]
+SUB
+PUSH 2
+DIV
+PUSH 0
+POP  RBX
+PUSH [RBX]
+DIV
+PUSH 5  ; ans1 <- 5
+POP  RBX
+POP [RBX]
+PUSH 0
+PUSH 4
+POP  RBX
+PUSH [RBX]
+SUB
+PUSH 1
+POP  RBX
+PUSH [RBX]
+SUB
+PUSH 2
+DIV
+PUSH 0
+POP  RBX
+PUSH [RBX]
+DIV
+PUSH 6  ; ans2 <- 6
+POP  RBX
+POP [RBX]
+PUSH 6
+POP  RBX
+PUSH [RBX]
+PUSH 5
+POP  RBX
+PUSH [RBX]
+OUT
+JMP :6
 :7
-
-    PUSH RFX
-    CALL :3
-    PUSH RFX
-    CALL :3
-    MUL  ; dist_from_center(radius, y) ^ 2
-
-    PUSH REX
-    PUSH 2
-    DIV
-    PUSH RBX
-    SUB
-    CALL :3
-    PUSH REX
-    PUSH 2
-    DIV
-    PUSH RBX
-    SUB
-    CALL :3
-    MUL ; dist_from_center(radius, x - radius) ^ 2
-
-    ADD
-
-    PUSH RBX
-    PUSH RBX
-    MUL
-    JB :6 ; dist_from_center(radius, y) ^ 2 + dist_from_center(radius, x - radius) ^ 2 < radius ** 2
-    
-    PUSH RBX 
-    PUSH RFX
-    JAE  :9 ;radius >= y
-
-    PUSH RBX
-    PUSH 5
-    MUL
-    PUSH RFX
-    JBE  :9 ; 5 * radius <= y
-
-    PUSH RBX
-    PUSH 1
-    ADD
-    PUSH REX
-    PUSH 2
-    DIV
-    JAE  :9 ; radius >= x
-
-    PUSH RBX
-    PUSH 3
-    MUL
-    PUSH REX
-    PUSH 2
-    DIV
-    PUSH RAX
-    ADD
-    JBE  :9 ; 3 * radius <= y + s
-
-    JMP :8 ;radius < y && y < 5 * radius && radius < x && x + s < 3 * radius
+PUSH 3
+POP  RBX
+PUSH [RBX]
+PUSH 0
+ISE
+PUSH 0
+JE :9
+PUSH 0
+PUSH 1
+POP  RBX
+PUSH [RBX]
+PUSH 2
+DIV
+PUSH 0
+POP  RBX
+PUSH [RBX]
+DIV
+SUB
+PUSH 7  ; ans <- 7
+POP  RBX
+POP [RBX]
+PUSH 7
+POP  RBX
+PUSH [RBX]
+OUT
+JMP :8
 :9
-
-    PUSH RFX
-
-    PUSH RDX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    PUSH RFX
-    PUSH RDX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    MUL  ; dist_from_center(radius, y- 2 * elem_size) ^ 2
-
-    PUSH REX
-    PUSH 2
-    DIV
-    CALL :3
-    PUSH REX
-    PUSH 2
-    DIV
-    CALL :3
-    MUL ; dist_from_center(radius, x) ^ 2
-
-    ADD
-
-    PUSH RBX
-    PUSH RBX
-    MUL
-    JB :8 ; dist_from_center(radius, y- 2 * elem_size) ^ 2 + dist_from_center(radius, x) ^ 2 < radius ** 2
-
-    PUSH RFX
-    PUSH RDX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    PUSH RFX
-    PUSH RDX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    MUL  ; dist_from_center(radius, y- 2 * elem_size) ^ 2
-
-    PUSH REX
-    PUSH 2
-    DIV
-    PUSH RBX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    PUSH REX
-    PUSH 2
-    DIV
-    PUSH RBX
-    PUSH 2
-    MUL
-    SUB
-    CALL :3
-    MUL ; dist_from_center(radius, x - 2 * radius)^ 2
-
-    ADD
-
-    PUSH RBX
-    PUSH RBX
-    MUL
-    JB :8 ; dist_from_center(radius, y- 2 * elem_size) ^ 2 + dist_from_center(radius, x - 2 * radius) ^ 2 < radius ** 2
-
-    PUSH 32
-    POP [HUI]
-
-    RET
-
+PUSH 321123
+OUT
 :8
-    PUSH 4279538464
-    POP [HUI]
-
-    RET
-
 :6
-    PUSH 3340076320
-    POP [HUI]
-
-    RET
+:0
+HALT

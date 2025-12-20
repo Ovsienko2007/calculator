@@ -138,7 +138,7 @@ int add_jump_instruct(char *command, bytecode *buffer, int command_len, assemble
 int get_jump_line(char *label, labels *labels_arr, assembler_error *error){
     if (label[0] == ':'){
         if (is_number(label + 1) && 0 <= atoi(label + 1)){
-            if ((size_t)atoi(label + 1) > labels_arr->labels_pos_arr.size || labels_arr->labels_pos_arr.data[atoi(label + 1)] == -1){
+            if ((size_t)atoi(label + 1) >= labels_arr->labels_pos_arr.size || labels_arr->labels_pos_arr.data[atoi(label + 1)] == -1){
                 labels_arr->all_labels_added = false;
 
                 labels_arr->all_labels.data[labels_arr->all_labels.size] = atoi(label + 1);

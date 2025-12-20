@@ -47,9 +47,9 @@
       "./Build/ReadFile/file_read.o",
       "ReadFile/file_read.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/ReadFile/file_read.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/ReadFile/file_read.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/ReadFile/file_read.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/ReadFile/file_read.o"
   },
   {
     "arguments": [
@@ -101,9 +101,9 @@
       "./Build/ASM/Source/add_instructs.o",
       "ASM/Source/add_instructs.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/ASM/Source/add_instructs.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/ASM/Source/add_instructs.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/ASM/Source/add_instructs.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/ASM/Source/add_instructs.o"
   },
   {
     "arguments": [
@@ -155,9 +155,9 @@
       "./Build/ASM/Source/ASM.o",
       "ASM/Source/ASM.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/ASM/Source/ASM.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/ASM/Source/ASM.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/ASM/Source/ASM.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/ASM/Source/ASM.o"
   },
   {
     "arguments": [
@@ -209,9 +209,9 @@
       "./Build/ASM/Source/run_pass.o",
       "ASM/Source/run_pass.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/ASM/Source/run_pass.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/ASM/Source/run_pass.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/ASM/Source/run_pass.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/ASM/Source/run_pass.o"
   },
   {
     "arguments": [
@@ -263,9 +263,9 @@
       "./Build/SPU/main.o",
       "SPU/main.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/SPU/main.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/SPU/main.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/SPU/main.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/SPU/main.o"
   },
   {
     "arguments": [
@@ -317,9 +317,9 @@
       "./Build/SPU/SPU.o",
       "SPU/SPU.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/SPU/SPU.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/SPU/SPU.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/SPU/SPU.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/SPU/SPU.o"
   },
   {
     "arguments": [
@@ -371,8 +371,8 @@
       "./Build/SPU/Stack/stack.o",
       "SPU/Stack/stack.cpp"
     ],
-    "directory": "/home/gleb/Desktop/calculator",
-    "file": "/home/gleb/Desktop/calculator/SPU/Stack/stack.cpp",
-    "output": "/home/gleb/Desktop/calculator/Build/SPU/Stack/stack.o"
+    "directory": "/home/gleb/Desktop/-programming-language/calculator",
+    "file": "/home/gleb/Desktop/-programming-language/calculator/SPU/Stack/stack.cpp",
+    "output": "/home/gleb/Desktop/-programming-language/calculator/Build/SPU/Stack/stack.o"
   }
 ]

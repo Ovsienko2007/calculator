@@ -73,7 +73,7 @@ start_spu:
 	./$(BUILDDIR)/$(EXECUTABLE_NAME_SPU)
 
 start_asm:
-	./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) factorial.asm
+	./$(BUILDDIR)/$(EXECUTABLE_NAME_ASM) source.asm
 
 start_img:
 	python3 mk_img.py video.mp4

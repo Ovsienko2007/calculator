@@ -167,11 +167,12 @@ int add_pushm_popm_instruct(bytecode *buffer, assembler_error *error,
                       data_text *program, int line, instr_name instr);
 int add_jump_instruct(char *command, bytecode *buffer, int command_len, assembler_error *error,
                       data_text *program, int line, labels *labels_arr);
-
-
-int get_jump_line(char *label, labels *labels_arr, assembler_error *error);
 void add_new_label(bytecode *buffer, labels *labels_arr, data_text *program, 
                     const char *command, int line, int command_len, assembler_error *error);
+    
+
+int get_jump_line(char *label, labels *labels_arr, assembler_error *error);
+
 int get_reg_name(data_text *program, int line, assembler_error *error, get_reg_mod mod);
 int add_label_to_arr(labels *labels_arr, int new_elem, size_t pos, assembler_error *error);
 
