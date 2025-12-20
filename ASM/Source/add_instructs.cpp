@@ -168,7 +168,7 @@ int get_jump_line(char *label, labels *labels_arr, assembler_error *error){
 
 
 void add_new_label(bytecode *buffer, labels *labels_arr, data_text *program, 
-                    const char *command, int line, int command_len, assembler_error *error){ //TODO
+                    const char *command, int line, int command_len, assembler_error *error){
     if (is_number(command + 1) && 0 <= atoi(command + 1)){
         add_label_to_arr(labels_arr, (int)buffer->size, (size_t)atoi(command + 1), error);
     }

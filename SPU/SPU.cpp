@@ -227,10 +227,10 @@ static int run_add(processor *proc, error_t *err){
 }
 
 static int run_pow_func   (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, (int)pow(num_1, num_2));
@@ -238,10 +238,10 @@ static int run_pow_func   (processor *proc, error_t *err){
 }
 
 static int run_is_e_func  (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 == num_2);
@@ -249,10 +249,10 @@ static int run_is_e_func  (processor *proc, error_t *err){
 }
 
 static int run_is_ne_func (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 != num_2);
@@ -260,10 +260,10 @@ static int run_is_ne_func (processor *proc, error_t *err){
 }
 
 static int run_is_be_func (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 <= num_2);
@@ -271,10 +271,10 @@ static int run_is_be_func (processor *proc, error_t *err){
 }
 
 static int run_is_b_func  (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 < num_2);
@@ -282,10 +282,10 @@ static int run_is_b_func  (processor *proc, error_t *err){
 }
 
 static int run_is_ae_func (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 >= num_2);
@@ -293,10 +293,10 @@ static int run_is_ae_func (processor *proc, error_t *err){
 }
 
 static int run_is_a_func  (processor *proc, error_t *err){
-    stackElemType num_1 = pop_stack(&proc->stack, err);
+    stackElemType num_2 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
-    stackElemType num_2 = pop_stack(&proc->stack, err);
+    stackElemType num_1 = pop_stack(&proc->stack, err);
     if (*err) return 1;
 
     push_stack(&proc->stack, num_1 > num_2);
