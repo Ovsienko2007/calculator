@@ -7,12 +7,17 @@ static int len_space_symb(const char *str);
 
 int run_commands(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
     if (!run_first_pass(buffer, program, file_name, labels_arr)) return 1;
+
     if (!labels_arr->all_labels_added){
-        fprintf(stderr, "2");
+        fprintf(stderr, "Second pass was started\n");
+
         labels_arr->all_labels_added = true;
+
         if (run_second_pass(buffer, labels_arr)) return 1;
     }
-    fprintf(stderr, "3");
+
+    fprintf(stderr, "Compilation was ended\n");
+
     if (!labels_arr->all_labels_added){
         printf("UNDEFINED LABEL! FUCK YOU!!!!!!!!\n");
         return 1;
@@ -22,7 +27,6 @@ int run_commands(bytecode *buffer, data_text *program, const char *file_name, la
 }
 
 bool run_first_pass(bytecode *buffer, data_text *program, const char *file_name, labels *labels_arr){
-    fprintf(stderr, "1");
     char command[maxCommandLen] = {};
     bool program_ended = false;
     bool no_errors = true;

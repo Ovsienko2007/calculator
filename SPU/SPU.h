@@ -26,7 +26,8 @@ enum instr_name{
     sqrt_func  = 6,
     dump_func  = 7,
     out_func   = 8,
-    in_func    = 9,
+    nl_func    = 9,
+    in_func    = 10,
     pushr_func = 31,
     popr_func  = 32,
     pushm_func = 41,
@@ -54,8 +55,8 @@ enum instr_name{
 };
 
 struct code_t{
-    int size;
-    int capacity;
+    size_t size;
+    size_t capacity;
     int *data;
 };
 
@@ -72,7 +73,7 @@ struct RAM{
 struct processor{
     stack_t    stack;
     code_t     code;
-    int        extantion_point;
+    size_t     extantion_point;
     registers  regs;
     stack_t    ret_arr;
     RAM const *ram;

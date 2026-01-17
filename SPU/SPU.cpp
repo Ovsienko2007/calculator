@@ -10,6 +10,7 @@ static int run_sub  (processor *proc, error_t *err);
 static int run_div  (processor *proc, error_t *err);
 static int run_sqrt (processor *proc, error_t *err);
 static int run_out  (processor *proc, error_t *err);
+static int run_nl   ();
 static int run_jump (processor *proc, error_t *err, int func);
 static int run_call (processor *proc, error_t *err);
 static int run_ret  (processor *proc, error_t *err);
@@ -115,6 +116,9 @@ int run_code(processor *proc){
         case clear_func:
             run_clear();
             break;
+        case nl_func:
+            run_nl();
+            break;
         case jmp_func: 
         case jb_func: case jbe_func:
         case ja_func: case jae_func:
@@ -144,6 +148,7 @@ int run_code(processor *proc){
             proc->extantion_point++;
         }
     }
+
     return work_status;
 }
 
@@ -368,11 +373,15 @@ static int run_sqrt(processor *proc, error_t *err){
 }
 
 static int run_out(processor *proc, error_t *err){
-    while (proc->stack.size != 0){
+    if (proc->stack.size != 0){
         stackElemType num = pop_stack(&proc->stack, err);
         if (*err) return 1;
         printf("%d ", num);
     }
+    return 0;
+}
+
+static int run_nl(){
     printf("\n");
     return 0;
 }
@@ -455,7 +464,7 @@ static int run_jump(processor *proc, error_t *err, int func){
     }
     
     if (func == jmp_func){
-        proc->extantion_point = proc->code.data[proc->extantion_point + 1];
+        proc->extantion_point = (size_t)proc->code.data[proc->extantion_point + 1];
         return 0;
     }
     
@@ -468,7 +477,7 @@ static int run_jump(processor *proc, error_t *err, int func){
     for (size_t check_num = 0; check_num < sizeof(jump_func) / sizeof(jump_func[0]); check_num++){
         if (func == jump_func[check_num].instr){
             if (jump_func[check_num].func(par1, par2)){
-                proc->extantion_point = proc->code.data[proc->extantion_point + 1];
+                proc->extantion_point = (size_t)proc->code.data[proc->extantion_point + 1];
             }
             else proc->extantion_point += 2;
             return 0;
@@ -486,7 +495,7 @@ static int run_ret(processor *proc, error_t *err){
     int new_extantial_point = pop_stack(&proc->ret_arr, err);
     if (*err != no_error) return -1;
 
-    proc->extantion_point = new_extantial_point;
+    proc->extantion_point = (size_t)new_extantial_point;
     return 0;
 }
 
@@ -497,10 +506,10 @@ static int run_call(processor *proc, error_t *err){
     }
     
     int new_extantial_point = proc->code.data[proc->extantion_point + 1];
-    push_stack(&proc->ret_arr, proc->extantion_point + 2, err);
+    push_stack(&proc->ret_arr, (int)proc->extantion_point + 2, err);
     if (*err != no_error) return -1;
 
-    proc->extantion_point = new_extantial_point;
+    proc->extantion_point = (size_t)new_extantial_point;
     return 0;
 }
 static int run_show(processor *proc, error_t *err){

@@ -23,9 +23,11 @@ int add_simple_instructs(char *command, bytecode *buffer, assembler_error *error
     for (size_t num_check = 0; num_check < sizeof(instruct_arr) / sizeof(instruct_arr[0]); num_check++){
         if (strcmp(command, instruct_arr[num_check].command) == 0){
             if (add_command(buffer, instruct_arr[num_check].instr)) *error = inside_error;
+
             return 1;
         }
     }
+
     return 0;
 }
 
